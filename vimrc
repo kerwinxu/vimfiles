@@ -210,8 +210,14 @@ Plug 'kien/ctrlp.vim'
 	let g:ctrlp_working_path_mode = 'ra'
 	let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
 
-map <a-F3> :copen<cr>:vimgrep // **
-imap <a-F3> <esc>:copen<cr>:vimgrep // **
+Plug 'junegunn/fzf.vim'
+
+
+" map <a-F3> :copen<cr>:vimgrep // **
+" imap <a-F3> <esc>:copen<cr>:vimgrep // **
+
+map <a-F3> :Ack 
+imap <a-F3> :Ack 
 
 "快速搜索文件中的内容的
 if executable('ag')
@@ -529,6 +535,7 @@ nmap sn <Plug>(ale_next_wrap)
 " nmap <Leader>s :ALEToggle<CR>
 "<Leader>d查看错误或警告的详细信息
 " nmap <Leader>d :ALEDetail<CR>
+let g:ale_fix_on_save = 1
 "
 "
 " 500 毫秒后调用 LoadPlug，且只调用一次, 见 `:h timer_start()`
