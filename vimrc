@@ -419,6 +419,33 @@ func! HeaderPython()
 	normal A
 endfunc
 "
+"这个是给python添加调试的
+func! AddPythonBreak()
+if has('python3')
+python3 <<EOF
+_str_break = "import ipdb;ipdb.set_trace()"
+#因为存在缩进，所以这里必须得先取得函数的缩进是多少。然后加上缩进迭代添加注释
+cb = vim.current.buffer     # 获取当前缓冲区
+#获得当前位置
+(x,y)=vim.current.window.cursor
+#获得当前行
+line=cb[x-1]
+#首先判断前面有几个缩进啦。
+#然后遍历加上注释
+num_space=0
+len_line=len(line)
+while(num_space<len_line):
+	if(line[num_space].isspace()):
+		num_space=num_space+1
+	else:
+		s=''.center(num_space,' ')
+		cb.append(s+_str_break,x-1)
+		break
+EOF
+endif
+endfunc
+map <Leader>b :call AddPythonBreak()<CR>
+
 "这个是给python函数的注释，作为__doc__用
 func! CommentPython()
 if has('python3')
@@ -724,7 +751,7 @@ func! CompileCode()
     	elseif &filetype == 'cs'
             exec "\"!C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\csc.exe\" \"%\""
     	elseif &filetype == 'python'
-            exec "!python \"%\""
+            exec "!start python \"%\""
     	elseif &filetype == 'lisp'
             exec "!sbcl --script \"%\""
         endif
