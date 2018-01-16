@@ -162,7 +162,7 @@ let g:jedi#goto_assignments_command = "<leader>g"
 let g:jedi#documentation_command = "K"
 let g:jedi#usages_command = "<leader>n"
 " let g:jedi#completions_command = "<C-Space>"
-let g:jedi#rename_command = "<f2>"
+let g:jedi#rename_command = "<F2>"
 """""""""
 
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
@@ -508,13 +508,34 @@ endfunc
 autocmd FileType python :call PythonConfig()
 
 Plug 'davidhalter/jedi-vim' , { 'on': [] }
+Plug 'w0rp/ale'
+"ale
+"始终开启标志列
+let g:ale_sign_column_always = 1
+let g:ale_set_highlights = 0
+"自定义error和warning图标
+let g:ale_sign_error = 'E:'
+let g:ale_sign_warning = 'W:'
+"在vim自带的状态栏中整合ale
+let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+"显示Linter名称,出错或警告等相关信息
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+"普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+nmap sp <Plug>(ale_previous_wrap)
+nmap sn <Plug>(ale_next_wrap)
+"<Leader>s触发/关闭语法检查
+" nmap <Leader>s :ALEToggle<CR>
+"<Leader>d查看错误或警告的详细信息
+" nmap <Leader>d :ALEDetail<CR>
 "
 "
 " 500 毫秒后调用 LoadPlug，且只调用一次, 见 `:h timer_start()`
 call timer_start(500, 'LoadPlug')
 function! LoadPlug(timer) abort
   " 手动加载
-  autocmd FileType  python :call plug#load('jedi-vim')
+  call plug#load('jedi-vim')
   " call plug#load('python-mode')
   call plug#load('vim-gitgutter')
 
@@ -752,6 +773,7 @@ function! AutoUpdateCtags()
     while isdirectory(dir) && i < max
         if filereadable(dir . 'tags')
 			execute ':!start /B  cd ' . dir . ' & ctags -a tags'
+			redraw
             let break = 1
         endif
         if break == 1
@@ -774,6 +796,7 @@ function! AutoUpdategtags()
     while isdirectory(dir) && i < max
         if filereadable(dir . 'GTAGS')
 			execute ':!start /B  cd ' . dir . ' & gtags -i'
+			redraw
             let break = 1
         endif
         if break == 1
