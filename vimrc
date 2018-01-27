@@ -364,9 +364,9 @@ endfunc
 autocmd FileType ruby,eruby,python,javascript,html,css,xml,java,cs,lisp :call ProgramConfig()
 
 "代码自动提示
-" Plug 'vim-scripts/AutoComplPop'
-	" let g:acp_enableAtStartup = 1
-	" let g:acp_behaviorPythonOmniLength = 2
+Plug 'vim-scripts/AutoComplPop'
+	let g:acp_enableAtStartup = 1
+	let g:acp_behaviorPythonOmniLength = 2
 
 Plug 'vim-scripts/YankRing.vim'
 
@@ -522,6 +522,7 @@ func! PythonConfig()
 	set tags+=D:/Anaconda3/tags
 	let g:python_host_skip_check=1
 	let g:python3_host_prog = 'd:/Anaconda3/python.exe'
+	exec ":AcpDisable"
 endfunc
 
 autocmd FileType python :call PythonConfig()
@@ -607,23 +608,16 @@ Plug 'w0rp/ale'
 call timer_start(500, 'LoadPlug')
 function! LoadPlug(timer) abort
   " 手动加载
-  " call plug#load('jedi-vim')
+  call plug#load('jedi-vim')
   " call plug#load('python-mode')
 
 endfunction
 
-Plug 'maralla/completor.vim'
-	let g:completor_auto_trigger = 1
-	let g:completor_python_binary = "d:/Anaconda3/python.exe"
-	let g:completor_auto_close_doc = 0
-	let g:completor_set_options = 1
-	" set completeopt-=longest
-	" set completeopt+=menuone
-	" set completeopt+=noinsert 
-	" set completeopt+=preview  
-	" " if &completeopt !~# 'noinsert\|noselect'
-	  " " set completeopt+=noselect
-	" " endif
+" Plug 'maralla/completor.vim'
+	" let g:completor_auto_trigger = 1
+	" let g:completor_python_binary = "d:/Anaconda3/python.exe"
+	" let g:completor_auto_close_doc = 0
+	" let g:completor_set_options = 1
 
 " Plug  'python-mode/python-mode'  , { 'on': [] }
     " let g:pymode_python = 'python3'
