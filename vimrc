@@ -146,23 +146,6 @@ set wildmenu
 autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
 """"""""
 " autocmd FileType python set omnifunc=python3complete#Complete
-autocmd FileType python set omnifunc=jedi#completions
-let g:neocomplete#enable_auto_select = 1
-let g:jedi#popup_select_first=1
-set completeopt=longest,menuone
-let g:jedi#auto_vim_configuration = 1
-let g:jedi#popup_on_dot = 1
-if !exists('g:neocomplete#force_omni_input_patterns')
-		let g:neocomplete#force_omni_input_patterns = {}
-endif
-let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\)\w*'
-let g:jedi#goto_command = "<leader>d"
-let g:jedi#goto_assignments_command = "<leader>g"
-" let g:jedi#goto_definitions_command = ""
-let g:jedi#documentation_command = "K"
-let g:jedi#usages_command = "<leader>n"
-" let g:jedi#completions_command = "<C-Space>"
-let g:jedi#rename_command = "<F2>"
 """""""""
 
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
@@ -228,20 +211,21 @@ endif
 "tagbar是一个taglist的替代品，比taglist更适合c++使用，函数能够按类区分，支持按类折叠显示等，
 Plug 'majutsushi/Tagbar'
 "快速配括号等
-Plug 'vim-scripts/surround.vim'
-"状态栏
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-	let g:airline_powerline_fonts = 1
-	let g:airline_theme = 'bubblegum'
-	""开tabline功能,方便查看Buffer和切换，这个功能比较不错"
-	"""我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
-	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#buffer_nr_show = 1
+" Plug 'vim-scripts/surround.vim'
+" "状态栏
+set laststatus=2
+" Plug 'vim-airline/vim-airline'
+" " Plug 'vim-airline/vim-airline-themes'
+	" " let g:airline_powerline_fonts = 1
+	" " let g:airline_theme = 'bubblegum'
+	" " ""开tabline功能,方便查看Buffer和切换，这个功能比较不错"
+	" """我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
+	" let g:airline#extensions#tabline#enabled = 1
+	" let g:airline#extensions#tabline#buffer_nr_show = 1
 
-	if !exists('g:airline_symbols')
-		let g:airline_symbols = {}
-	endif
+	" if !exists('g:airline_symbols')
+		" let g:airline_symbols = {}
+	" endif
 "
 "树形目录插件
 Plug 'vim-scripts/The-NERD-tree'
@@ -322,39 +306,38 @@ endf
 Plug 'drmingdrmer/xptemplate'
 
 "如下的这个是自动写注释的
+" Plug  'vim-scripts/DoxygenToolkit.vim' 
+	" let g:DoxygenToolkit_briefTag_pre="@Synopsis      "   
+	" let g:DoxygenToolkit_paramTag_pre="@Param         "   
+	" let g:DoxygenToolkit_returnTag   ="@Returns       "   
+	" let g:DoxygenToolkit_blockHeader="============================================================================"   
+	" let g:DoxygenToolkit_blockFooter="============================================================================"   
+	" let g:DoxygenToolkit_authorName="Kerwin Xu"   
+	" let g:DoxygenToolkit_fileTag = "@filename      "  
+   " let g:DoxygenToolkit_briefTag_funcName = "yes"
 
-Plug  'vim-scripts/DoxygenToolkit.vim' 
-	let g:DoxygenToolkit_briefTag_pre="@Synopsis      "   
-	let g:DoxygenToolkit_paramTag_pre="@Param         "   
-	let g:DoxygenToolkit_returnTag   ="@Returns       "   
-	let g:DoxygenToolkit_blockHeader="============================================================================"   
-	let g:DoxygenToolkit_blockFooter="============================================================================"   
-	let g:DoxygenToolkit_authorName="Kerwin Xu"   
-	let g:DoxygenToolkit_fileTag = "@filename      "  
-   let g:DoxygenToolkit_briefTag_funcName = "yes"
-
-   " for C++ style, change the '@' to '\'
-   let g:DoxygenToolkit_templateParamTag_pre = "@tparam "
-   let g:DoxygenToolkit_throwTag_pre = "@throw " " @exception is also valid
-   let g:DoxygenToolkit_fileTag = "@file "
-   let g:DoxygenToolkit_dateTag = "@date "
-   let g:DoxygenToolkit_authorTag = "@author : kerwin xu  "
-   let g:DoxygenToolkit_versionTag = "@version		:"
-   let g:DoxygenToolkit_blockTag = "@name "
-   let g:DoxygenToolkit_classTag = "@class "
-   let g:doxygen_enhanced_color = 1
-   let g:load_doxygen_syntax = 1
-	let g:DoxygenToolkit_briefTag_funcName = "yes"
+   " " for C++ style, change the '@' to '\'
+   " let g:DoxygenToolkit_templateParamTag_pre = "@tparam "
+   " let g:DoxygenToolkit_throwTag_pre = "@throw " " @exception is also valid
+   " let g:DoxygenToolkit_fileTag = "@file "
+   " let g:DoxygenToolkit_dateTag = "@date "
+   " let g:DoxygenToolkit_authorTag = "@author : kerwin xu  "
+   " let g:DoxygenToolkit_versionTag = "@version		:"
+   " let g:DoxygenToolkit_blockTag = "@name "
+   " let g:DoxygenToolkit_classTag = "@class "
+   " let g:doxygen_enhanced_color = 1
+   " let g:load_doxygen_syntax = 1
+	" let g:DoxygenToolkit_briefTag_funcName = "yes"
 "缩进插件
 Plug 'Yggdroot/indentLine'
 
 "Run
-Plug 'chemzqm/vim-run'
-let g:vim_run_command_map = {
-  \'javascript': 'node',
-  \'php': 'php',
-  \'python': 'python',
-  \}
+" Plug 'chemzqm/vim-run'
+" let g:vim_run_command_map = {
+  " \'javascript': 'node',
+  " \'php': 'php',
+  " \'python': 'python',
+  " \}
 "自动添加空格
 fun AutoSpace()
 		"设置= + - * 前后自动空格
@@ -381,9 +364,9 @@ endfunc
 autocmd FileType ruby,eruby,python,javascript,html,css,xml,java,cs,lisp :call ProgramConfig()
 
 "代码自动提示
-Plug 'vim-scripts/AutoComplPop'
-	let g:acp_enableAtStartup = 1
-	let g:acp_behaviorPythonOmniLength = 2
+" Plug 'vim-scripts/AutoComplPop'
+	" let g:acp_enableAtStartup = 1
+	" let g:acp_behaviorPythonOmniLength = 2
 
 Plug 'vim-scripts/YankRing.vim'
 
@@ -443,6 +426,7 @@ while(num_space<len_line):
 		break
 EOF
 endif
+exec "w"
 endfunc
 map <Leader>b :call AddPythonBreak()<CR>
 
@@ -536,52 +520,110 @@ func! PythonConfig()
 	"autocmd FileWritePre *.py :call LastModified()
 	"添加python的tags
 	set tags+=D:/Anaconda3/tags
+	let g:python_host_skip_check=1
+	let g:python3_host_prog = 'd:/Anaconda3/python.exe'
 endfunc
 
 autocmd FileType python :call PythonConfig()
 
-Plug 'davidhalter/jedi-vim' , { 'on': [] }
+Plug 'davidhalter/jedi-vim' , { 'on':[]}
+	autocmd FileType python set omnifunc=jedi#completions
+	let g:neocomplete#enable_auto_select = 1
+	let g:jedi#popup_select_first=1
+	set completeopt=longest,menuone
+	let g:jedi#auto_vim_configuration = 1
+	let g:jedi#popup_on_dot = 1
+	if !exists('g:neocomplete#force_omni_input_patterns')
+			let g:neocomplete#force_omni_input_patterns = {}
+	endif
+	let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\)\w*'
+	let g:jedi#goto_command = "<leader>d"
+	let g:jedi#goto_assignments_command = "<leader>g"
+	" let g:jedi#goto_definitions_command = ""
+	let g:jedi#documentation_command = "K"
+	let g:jedi#usages_command = "<leader>n"
+	" let g:jedi#completions_command = "<C-Space>"
+	let g:jedi#rename_command = "<F2>"
+	" "
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"试试deoplete.nvim,能补全，不过不如jedi
+" if has('nvim')
+  " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" else
+  " Plug 'Shougo/deoplete.nvim'
+  " Plug 'roxma/nvim-yarp'
+  " Plug 'roxma/vim-hug-neovim-rpc'
+" endif
+" Plug 'zchee/deoplete-jedi' , { 'for':['python']}
+	" " let g:deoplete#sources#jedi#python_path="e:/Anaconda3/python.exe"
+" " Use deoplete.
+" let g:deoplete#enable_at_startup = 1
+
+
 Plug 'w0rp/ale'
-"ale
-"始终开启标志列
-let g:ale_sign_column_always = 1
-let g:ale_set_highlights = 0
-"自定义error和warning图标
-let g:ale_sign_error = 'E:'
-let g:ale_sign_warning = 'W:'
-"在vim自带的状态栏中整合ale
-let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
-"显示Linter名称,出错或警告等相关信息
-let g:ale_echo_msg_error_str = 'E'
-let g:ale_echo_msg_warning_str = 'W'
-let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-"普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-nmap sp <Plug>(ale_previous_wrap)
-nmap sn <Plug>(ale_next_wrap)
-"<Leader>s触发/关闭语法检查
-" nmap <Leader>s :ALEToggle<CR>
-"<Leader>d查看错误或警告的详细信息
-" nmap <Leader>d :ALEDetail<CR>
-let g:ale_fix_on_save = 1
+	"始终开启标志列
+	let g:ale_sign_column_always = 1
+	let g:ale_set_highlights = 0
+	"自定义error和warning图标
+	let g:ale_sign_error = 'E:'
+	let g:ale_sign_warning = 'W:'
+	"在vim自带的状态栏中整合ale
+	" let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+	"显示Linter名称,出错或警告等相关信息
+	" let g:ale_echo_msg_error_str = 'E'
+	" let g:ale_echo_msg_warning_str = 'W'
+	" let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+	" "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+	nmap sp <Plug>(ale_previous_wrap)
+	nmap sn <Plug>(ale_next_wrap)
+	" "<Leader>s触发/关闭语法检查
+	" " nmap <Leader>s :ALEToggle<CR>
+	" "<Leader>d查看错误或警告的详细信息
+	" nmap <Leader>d :ALEDetail<CR>
+	let g:ale_fix_on_save = 1
+
 "
+"
+"如下的lsp压根不能补全，可能是我设置问题。
+" Plug 'prabirshrestha/async.vim'
+" Plug 'prabirshrestha/vim-lsp'
+" Plug 'prabirshrestha/asyncomplete.vim'
+" Plug 'prabirshrestha/asyncomplete-lsp.vim'
+	" if executable('pyls')
+		" au User lsp_setup call lsp#register_server({
+			" \ 'name': 'pyls',
+			" \ 'cmd': {server_info->['pyls']},
+			" \ 'whitelist': ['python'],
+			" \ })
+	" endif
+	" let g:lsp_async_completion = 1
+	" let g:lsp_signs_enabled = 1         " enable signs
+	" let g:lsp_diagnostics_echo_cursor = 1 " enable echo under cursor when in normal mode
+	" let g:asyncomplete_auto_popup = 1
+	" autocmd FileType python setlocal omnifunc=lsp#complete
+
 "
 " 500 毫秒后调用 LoadPlug，且只调用一次, 见 `:h timer_start()`
 call timer_start(500, 'LoadPlug')
 function! LoadPlug(timer) abort
   " 手动加载
-  call plug#load('jedi-vim')
+  " call plug#load('jedi-vim')
   " call plug#load('python-mode')
-  call plug#load('vim-gitgutter')
 
 endfunction
 
-" Plug 'maralla/completor.vim'
-" set completeopt-=longest
-" set completeopt+=menuone
-" set completeopt-=menu
-" if &completeopt !~# 'noinsert\|noselect'
-  " set completeopt+=noselect
-" endif
+Plug 'maralla/completor.vim'
+	let g:completor_auto_trigger = 1
+	let g:completor_python_binary = "d:/Anaconda3/python.exe"
+	let g:completor_auto_close_doc = 0
+	let g:completor_set_options = 1
+	" set completeopt-=longest
+	" set completeopt+=menuone
+	" set completeopt+=noinsert 
+	" set completeopt+=preview  
+	" " if &completeopt !~# 'noinsert\|noselect'
+	  " " set completeopt+=noselect
+	" " endif
 
 " Plug  'python-mode/python-mode'  , { 'on': [] }
     " let g:pymode_python = 'python3'
@@ -751,7 +793,7 @@ func! CompileCode()
     	elseif &filetype == 'cs'
             exec "\"!C:\\Program Files (x86)\\MSBuild\\14.0\\Bin\\csc.exe\" \"%\""
     	elseif &filetype == 'python'
-            exec "!start python \"%\""
+            exec "!python \"%\""
     	elseif &filetype == 'lisp'
             exec "!sbcl --script \"%\""
         endif
@@ -800,29 +842,32 @@ set autochdir
 
 "自动更新ctags
 function! AutoUpdateCtags()
-    let max = 10
-    let dir = './'
-    let i = 0
-    let break = 0
-    while isdirectory(dir) && i < max
-        if filereadable(dir . 'tags')
-			execute ':!start /B  cd ' . dir . ' & ctags -a tags'
-			redraw
-            let break = 1
-        endif
-        if break == 1
-            execute 'lcd ' . dir
-            break
-        endif
-        let dir = dir . '../'
-        let i = i + 1
-	endwhile
+	if &mod
+		let max = 10
+		let dir = './'
+		let i = 0
+		let break = 0
+		while isdirectory(dir) && i < max
+			if filereadable(dir . 'tags')
+				execute ':!start /B  cd ' . dir . ' & ctags -a tags'
+				redraw
+				let break = 1
+			endif
+			if break == 1
+				execute 'lcd ' . dir
+				break
+			endif
+			let dir = dir . '../'
+			let i = i + 1
+		endwhile
+	endif
 endf
 autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdateCtags()
 
 """"""""""""""""""gtags""""""""""""""""""""""
 "自动更新gtags
 function! AutoUpdategtags()
+	if &mod
     let max = 10
     let dir = './'
     let i = 0
@@ -840,6 +885,7 @@ function! AutoUpdategtags()
         let dir = dir . '../'
         let i = i + 1
 	endwhile
+endif
 endf
 autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdategtags()
 
@@ -908,7 +954,7 @@ imap <c-f8> <esc>:call FormartSrc()<CR>
 
 
 """""""""""""""""""""""如下是git相关"""""""""""""""""""""""""
-Plug 'airblade/vim-gitgutter'  , { 'on': [] }
+Plug 'airblade/vim-gitgutter'  
 set updatetime=1000
 
 "这个插件不能正常运行。
