@@ -15,6 +15,14 @@
 "f11
 "f12
 "
+"gd 转到当前光标所指的局部变量的定义
+"总结是：
+" 1，相同就跳到函数的开头：（如果都是左括号或者都是右括号），不同就跳到函数的结尾：
+     " { 和 } 用来跳到函数的开头。
+     " [] 和 ][ 用来跳到函数的结尾。
+" 2，左右左右，“左”在前面。前后前后，“前”也在前面。因此左括号打头则表示向前，右括号打头则表示向后：
+     " [[ 和 [] 用来向前跳
+     " ]] 和 ][ 用来向后跳
 
 "看到很多大佬用如下方法来配置，我也试试吧
 "我的层次是
@@ -363,7 +371,7 @@ func! ProgramConfig()
 endfunc
 autocmd FileType ruby,eruby,python,javascript,html,css,xml,java,cs,lisp :call ProgramConfig()
 
-"代码自动提示
+" 代码自动提示
 Plug 'vim-scripts/AutoComplPop'
 	let g:acp_enableAtStartup = 1
 	let g:acp_behaviorPythonOmniLength = 2
@@ -403,32 +411,32 @@ func! HeaderPython()
 endfunc
 "
 "这个是给python添加调试的
-func! AddPythonBreak()
-if has('python3')
-python3 <<EOF
-_str_break = "import ipdb;ipdb.set_trace()"
-#因为存在缩进，所以这里必须得先取得函数的缩进是多少。然后加上缩进迭代添加注释
-cb = vim.current.buffer     # 获取当前缓冲区
-#获得当前位置
-(x,y)=vim.current.window.cursor
-#获得当前行
-line=cb[x-1]
-#首先判断前面有几个缩进啦。
-#然后遍历加上注释
-num_space=0
-len_line=len(line)
-while(num_space<len_line):
-	if(line[num_space].isspace()):
-		num_space=num_space+1
-	else:
-		s=''.center(num_space,' ')
-		cb.append(s+_str_break,x-1)
-		break
-EOF
-endif
-exec "w"
-endfunc
-map <Leader>b :call AddPythonBreak()<CR>
+" func! AddPythonBreak()
+" if has('python3')
+" python3 <<EOF
+" _str_break = "import ipdb;ipdb.set_trace()"
+" #因为存在缩进，所以这里必须得先取得函数的缩进是多少。然后加上缩进迭代添加注释
+" cb = vim.current.buffer     # 获取当前缓冲区
+" #获得当前位置
+" (x,y)=vim.current.window.cursor
+" #获得当前行
+" line=cb[x-1]
+" #首先判断前面有几个缩进啦。
+" #然后遍历加上注释
+" num_space=0
+" len_line=len(line)
+" while(num_space<len_line):
+	" if(line[num_space].isspace()):
+		" num_space=num_space+1
+	" else:
+		" s=''.center(num_space,' ')
+		" cb.append(s+_str_break,x-1)
+		" break
+" EOF
+" endif
+" exec "w"
+" endfunc
+" map <Leader>b :call AddPythonBreak()<CR>
 
 "这个是给python函数的注释，作为__doc__用
 func! CommentPython()
@@ -522,7 +530,7 @@ func! PythonConfig()
 	set tags+=D:/Anaconda3/tags
 	let g:python_host_skip_check=1
 	let g:python3_host_prog = 'd:/Anaconda3/python.exe'
-	exec ":AcpDisable"
+	" exec ":AcpDisable"
 endfunc
 
 autocmd FileType python :call PythonConfig()
@@ -561,27 +569,27 @@ Plug 'davidhalter/jedi-vim' , { 'on':[]}
 " let g:deoplete#enable_at_startup = 1
 
 
-Plug 'w0rp/ale'
-	"始终开启标志列
-	let g:ale_sign_column_always = 1
-	let g:ale_set_highlights = 0
-	"自定义error和warning图标
-	let g:ale_sign_error = 'E:'
-	let g:ale_sign_warning = 'W:'
-	"在vim自带的状态栏中整合ale
-	" let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
-	"显示Linter名称,出错或警告等相关信息
-	" let g:ale_echo_msg_error_str = 'E'
-	" let g:ale_echo_msg_warning_str = 'W'
-	" let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-	" "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-	nmap sp <Plug>(ale_previous_wrap)
-	nmap sn <Plug>(ale_next_wrap)
-	" "<Leader>s触发/关闭语法检查
-	" " nmap <Leader>s :ALEToggle<CR>
-	" "<Leader>d查看错误或警告的详细信息
-	" nmap <Leader>d :ALEDetail<CR>
-	let g:ale_fix_on_save = 1
+" Plug 'w0rp/ale'
+	" "始终开启标志列
+	" let g:ale_sign_column_always = 1
+	" let g:ale_set_highlights = 0
+	" "自定义error和warning图标
+	" let g:ale_sign_error = 'E:'
+	" let g:ale_sign_warning = 'W:'
+	" "在vim自带的状态栏中整合ale
+	" " let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+	" "显示Linter名称,出错或警告等相关信息
+	" " let g:ale_echo_msg_error_str = 'E'
+	" " let g:ale_echo_msg_warning_str = 'W'
+	" " let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+	" " "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+	" nmap sp <Plug>(ale_previous_wrap)
+	" nmap sn <Plug>(ale_next_wrap)
+	" " "<Leader>s触发/关闭语法检查
+	" " " nmap <Leader>s :ALEToggle<CR>
+	" " "<Leader>d查看错误或警告的详细信息
+	" " nmap <Leader>d :ALEDetail<CR>
+	" let g:ale_fix_on_save = 1
 
 "
 "
@@ -608,8 +616,8 @@ Plug 'w0rp/ale'
 call timer_start(500, 'LoadPlug')
 function! LoadPlug(timer) abort
   " 手动加载
-  call plug#load('jedi-vim')
-  " call plug#load('python-mode')
+  " call plug#load('jedi-vim')
+  call plug#load('python-mode')
 
 endfunction
 
@@ -619,77 +627,77 @@ endfunction
 	" let g:completor_auto_close_doc = 0
 	" let g:completor_set_options = 1
 
-" Plug  'python-mode/python-mode'  , { 'on': [] }
-    " let g:pymode_python = 'python3'
-	" let g:pymode = 1
-	" let g:pymode_path=[]
-	" let g:pymode_options = 1
-	" let g:pymode_warnings = 1
-	" let g:pymode_options_max_line_length = 200
-    " "开启python-mode定义的移动方式
-    " let g:pymode_motion = 1
-    " "按键	功能
-    " "[[	Jump to previous class or function (normal, visual, operator modes)
-	" "]]	Jump to next class or function (normal, visual, operator modes)
-	" "[M	Jump to previous class or method (normal, visual, operator modes)
-	" "]M	Jump to next class or method (normal, visual, operator modes)
-	" "aC	Select a class. Ex: vaC, daC, yaC, caC (normal, operator modes)
-	" "iC	Select inner class. Ex: viC, diC, yiC, ciC (normal, operator modes)
-	" "aM	Select a function or method. Ex: vaM, daM, yaM, caM (normal, operator modes)
-	" "iM	Select inner function or method. Ex: viM, diM, yiM, ciM (normal, operator modes)
-	" " Documentation
-	" let g:pymode_doc = 1
-	" "let g:pymode_doc_key = 'K'
-	" " Override view python doc key shortcut to Ctrl-Shift-d
-	" let g:pymode_doc_bind = '<c-f3>'
-	" "Linting,代码检查的部分的
-	" let g:pymode_lint = 1
-    " let g:pymode_lint_ignore="E501"
-	" let g:pymode_lint_checker = ['pyflakes','pylint','pep8']
-	" "let g:pymode_lint_config = '($VIM)/bundle/Python-mode-klen/pymode/libs/pylama/lint/pylama_pylint/pylint.rc'		
-	" "Show error message if cursor placed at the error line  *'g:pymode_lint_message'*
-	" let g:pymode_lint_message = 1
-	" "Auto open cwindow (quickfix) if any errors have been found
-	" let g:pymode_lint_cwindow = 1
-	" " Auto check on save
-	" let g:pymode_lint_write = 1
-	" "Check code on every save (every)
-	" let g:pymode_lint_unmodified = 1
-	" "Check code when editing (on the fly)
-	" let g:pymode_lint_on_fly = 1
-	" let g:pymode_lint_sort = ['E', 'C', 'I']  " Errors first 'E',
-	" "Auto open cwindow (quickfix) if any errors have been found
+Plug  'python-mode/python-mode'  , { 'on': [] }
+	let g:pymode_python = 'python3'
+	let g:pymode = 1
+	let g:pymode_path=[]
+	let g:pymode_options = 1
+	let g:pymode_warnings = 1
+	let g:pymode_options_max_line_length = 200
+	"开启python-mode定义的移动方式
+	let g:pymode_motion = 1
+	"按键	功能
+	"[[	Jump to previous class or function (normal, visual, operator modes)
+	"]]	Jump to next class or function (normal, visual, operator modes)
+	"[M	Jump to previous class or method (normal, visual, operator modes)
+	"]M	Jump to next class or method (normal, visual, operator modes)
+	"aC	Select a class. Ex: vaC, daC, yaC, caC (normal, operator modes)
+	"iC	Select inner class. Ex: viC, diC, yiC, ciC (normal, operator modes)
+	"aM	Select a function or method. Ex: vaM, daM, yaM, caM (normal, operator modes)
+	"iM	Select inner function or method. Ex: viM, diM, yiM, ciM (normal, operator modes)
+	" Documentation
+	let g:pymode_doc = 1
+	"let g:pymode_doc_key = 'K'
+	" Override view python doc key shortcut to Ctrl-Shift-d
+	let g:pymode_doc_bind = '<c-f3>'
+	"Linting,代码检查的部分的
+	let g:pymode_lint = 1
+	let g:pymode_lint_ignore="E501"
+	let g:pymode_lint_checker = ['pyflakes','pylint','pep8']
+	"let g:pymode_lint_config = '($VIM)/bundle/Python-mode-klen/pymode/libs/pylama/lint/pylama_pylint/pylint.rc'		
+	"Show error message if cursor placed at the error line  *'g:pymode_lint_message'*
+	let g:pymode_lint_message = 1
+	"Auto open cwindow (quickfix) if any errors have been found
+	let g:pymode_lint_cwindow = 1
+	" Auto check on save
+	let g:pymode_lint_write = 1
+	"Check code on every save (every)
+	let g:pymode_lint_unmodified = 1
+	"Check code when editing (on the fly)
+	let g:pymode_lint_on_fly = 1
+	let g:pymode_lint_sort = ['E', 'C', 'I']  " Errors first 'E',
+	"Auto open cwindow (quickfix) if any errors have been found
 	
-	" " Support virtualenv
-	" let g:pymode_virtualenv = 0
-	" " Enable breakpoints plugin
-	" let g:pymode_breakpoint = 1
-	" let g:pymode_breakpoint_key = 'b'
-	" " syntax highlighting
-	" let g:pymode_syntax = 1
-	" let g:pymode_syntax_all = 1
-    " "高亮缩进错误
-	" let g:pymode_syntax_indent_errors = g:pymode_syntax_all
-    " "高亮空格错误
-	" let g:pymode_syntax_space_errors = g:pymode_syntax_all
-	" "rope setting
-	" let g:pymode_rope = 0
-	" let g:pymode_rope_lookup_project = 0 "一定要加这个，要不然遇到中文目录会乱码 的
-	" let g:pymode_rope_rename_bind = '<F2>' "改名的
-	" let g:pymode_rope_autoimport = 0
-    " "自动补全的
-    " let g:pymode_rope_completion = 0
-    " let g:pymode_rope_complete_on_dot = 1
-	" let g:pymode_rope_show_doc_bind = '<C-c>d'
-	" let g:pymode_rope_regenerate_on_write = 1 "Regenerate project cache on every save (if file has been modified)
-    " "let g:pymode_rope_completion_bind = '<C-Tab>'
-    " "<C-c>g跳转到定义处，同时新建竖直窗口打开
-    " let g:pymode_rope_goto_definition_bind = '<C-c>g'
-    " let g:pymode_rope_goto_definition_cmd = 'vnew'
-	" let g:pymode_run = 1
-	" "let g:pymode_run_bind = '<F5>'
-	" "Folding
-	" let g:pymode_folding = 0 "这个是一打开的时候，就折叠的
+	" Support virtualenv
+	let g:pymode_virtualenv = 0
+	" Enable breakpoints plugin
+	let g:pymode_breakpoint = 1
+	let g:pymode_breakpoint_key = 'b'
+	" syntax highlighting
+	let g:pymode_syntax = 1
+	let g:pymode_syntax_all = 1
+	"高亮缩进错误
+	let g:pymode_syntax_indent_errors = g:pymode_syntax_all
+	"高亮空格错误
+	let g:pymode_syntax_space_errors = g:pymode_syntax_all
+	"rope setting
+	let g:pymode_rope = 1
+	let g:pymode_rope_lookup_project = 0 "一定要加这个，要不然遇到中文目录会乱码 的
+	let g:pymode_rope_rename_bind = '<F2>' "改名的
+	let g:pymode_rope_autoimport = 1
+	"自动补全的
+	let g:pymode_rope_completion = 1
+	let g:pymode_rope_complete_on_dot = 1
+	let g:pymode_rope_show_doc_bind = '<leader>k'
+	let g:pymode_rope_regenerate_on_write = 1 "Regenerate project cache on every save (if file has been modified)
+	"let g:pymode_rope_completion_bind = '<C-Tab>'
+	"<C-c>g跳转到定义处，同时新建竖直窗口打开
+	let g:pymode_rope_goto_definition_bind = '<leader>g'
+	let g:pymode_rope_goto_definition_cmd = 'vnew'
+	let g:pymode_run = 1
+	"let g:pymode_run_bind = '<F5>'
+	"Folding
+	let g:pymode_folding = 0 "这个是一打开的时候，就折叠的
 
 
 
