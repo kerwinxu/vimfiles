@@ -1,28 +1,29 @@
-﻿"Author : kerwin
+﻿"Author: kerwin
 "这个是我的vim配置，用在gvim上。
 "如下是一些f键的按键
 "键		单独		Ctrl		shift		Alt
 "f1		帮助
 "f2		重命名
-"f3		ctrlp		doc			gtags -r	vimgrep
+"f3		ctrlp					gtags - r	vimgrep
 "F4
-"f5		运行		
-"f6		
+"f5		运行
+"f6
 "f7		文档注释
-"f8		IDE			格式化		
-"f9		:Gina		Gdiff		git push	commit -a -m		
+"f8		IDE			格式化
+"f9		: Gina		Gdiff		git push	commit - a - m
 "f10
 "f11
 "f12
+"'<leader>k': python - mode中显示函数注释的。
 "
 "gd 转到当前光标所指的局部变量的定义
 "总结是：
 " 1，相同就跳到函数的开头：（如果都是左括号或者都是右括号），不同就跳到函数的结尾：
-     " { 和 } 用来跳到函数的开头。
-     " [] 和 ][ 用来跳到函数的结尾。
+     " {和} 用来跳到函数的开头。
+     " [] 和][用来跳到函数的结尾。
 " 2，左右左右，“左”在前面。前后前后，“前”也在前面。因此左括号打头则表示向前，右括号打头则表示向后：
-     " [[ 和 [] 用来向前跳
-     " ]] 和 ][ 用来向后跳
+     " [[和[] 用来向前跳
+     "]] 和][用来向后跳
 
 "看到很多大佬用如下方法来配置，我也试试吧
 "我的层次是
@@ -30,8 +31,8 @@
 "通用配置
 "编程通用配置
 "python配置
-"c/c++配置
-"c#配置
+"c / c + +配置
+"c  # 配置
 "html插件
 "lisp插件
 "纯文本插件
@@ -39,6 +40,7 @@
 "调试 f6
 "ctags
 "gtags
+"cscope
 "格式化代码
 "代码检查插件
 "git相关
@@ -51,9 +53,8 @@
 "设置目录
 call plug#begin('E:/home/kerwin/vimfiles/pugged')
 
-filetype off   
-" Note: Skip initialization for vim-tiny or vim-small.
-if 0 | endif
+filetype off
+" Note: Skip initialization for vim - tiny or vim - small.
 
 if &compatible
     set nocompatible               " Be iMproved
@@ -63,19 +64,20 @@ endif
 "
 """"""""""""""""""如下是通用配置"""""""""""""
 
-let mapleader=' '
-set fileformats=unix,dos
+let mapleader = ' '
+" set fileformats = unix, dos
 "判断操作系统
 if has('win32')
-    source $VIMRUNTIME/vimrc_example.vim
+	source $VIMRUNTIME/vimrc_example.vim
     source $VIMRUNTIME/mswin.vim
 	source D:/gtags/share/gtags/gtags.vim
+	source D:/gtags/share/gtags/gtags-cscope.vim
     behave mswin
 endif
-"vim 基本配置 
+"vim 基本配置
 "编码配置
 if has("win32")
-	"set fileencoding=chinese
+	"set fileencoding = chinese
     set fileencoding=utf-8
 	if has('gui')
 		"如下的设置能保证在gvim，vim 中中文是没问题的.
@@ -219,6 +221,7 @@ endif
 "tagbar是一个taglist的替代品，比taglist更适合c++使用，函数能够按类区分，支持按类折叠显示等，
 Plug 'majutsushi/Tagbar'
 "快速配括号等
+"这个跟cscope的快捷键冲突。
 " Plug 'vim-scripts/surround.vim'
 " "状态栏
 set laststatus=2
@@ -295,7 +298,7 @@ function! EqualSign(char)
     let ex1 = getline('.')[col('.') - 3]
     let ex2 = getline('.')[col('.') - 2]
 
-    if ex1 =~ "[-=+><>\/\*]"
+    if ex1 =~ "[-=+><>\/\*!]"
         if ex2 !~ "\s"
             return "\<ESC>i".a:char."\<SPACE>"
         else
@@ -313,7 +316,7 @@ endf
 " 代码补全的 快速自动完成一些if、switch、for、while结构模板代码,Ctrl-\组合键即可完成代码补全
 Plug 'drmingdrmer/xptemplate'
 
-"如下的这个是自动写注释的
+" 如下的这个是自动写注释的
 " Plug  'vim-scripts/DoxygenToolkit.vim' 
 	" let g:DoxygenToolkit_briefTag_pre="@Synopsis      "   
 	" let g:DoxygenToolkit_paramTag_pre="@Param         "   
@@ -357,6 +360,7 @@ fun AutoSpace()
     inoremap <buffer>/ <c-r>=EqualSign('/')<CR>
     inoremap <buffer>> <c-r>=EqualSign('>')<CR>
     inoremap <buffer>< <c-r>=EqualSign('<')<CR>
+    inoremap <buffer>! <c-r>=EqualSign('!')<CR>
 "    inoremap <buffer>: <c-r>=Swap()<CR>
     inoremap <buffer>, ,<space>
     inoremap <buffer># #<space>
@@ -367,6 +371,7 @@ endfun
 func! ProgramConfig()
 	call AutoPair()
 	call AutoSpace()
+	let g:ale_fix_on_save = 1
 
 endfunc
 autocmd FileType ruby,eruby,python,javascript,html,css,xml,java,cs,lisp :call ProgramConfig()
@@ -411,32 +416,32 @@ func! HeaderPython()
 endfunc
 "
 "这个是给python添加调试的
-" func! AddPythonBreak()
-" if has('python3')
-" python3 <<EOF
-" _str_break = "import ipdb;ipdb.set_trace()"
-" #因为存在缩进，所以这里必须得先取得函数的缩进是多少。然后加上缩进迭代添加注释
-" cb = vim.current.buffer     # 获取当前缓冲区
-" #获得当前位置
-" (x,y)=vim.current.window.cursor
-" #获得当前行
-" line=cb[x-1]
-" #首先判断前面有几个缩进啦。
-" #然后遍历加上注释
-" num_space=0
-" len_line=len(line)
-" while(num_space<len_line):
-	" if(line[num_space].isspace()):
-		" num_space=num_space+1
-	" else:
-		" s=''.center(num_space,' ')
-		" cb.append(s+_str_break,x-1)
-		" break
-" EOF
-" endif
-" exec "w"
-" endfunc
-" map <Leader>b :call AddPythonBreak()<CR>
+func! AddPythonBreak()
+if has('python3')
+python3 <<EOF
+_str_break = "import ipdb;ipdb.set_trace()"
+# 因为存在缩进，所以这里必须得先取得函数的缩进是多少。然后加上缩进迭代添加注释
+cb = vim.current.buffer     # 获取当前缓冲区
+# 获得当前位置
+(x,y)=vim.current.window.cursor
+# 获得当前行
+line=cb[x-1]
+# 首先判断前面有几个缩进啦。
+# 然后遍历加上注释
+num_space=0
+len_line=len(line)
+while(num_space<len_line):
+	if(line[num_space].isspace()):
+		num_space=num_space+1
+	else:
+		s=''.center(num_space,' ')
+		cb.append(s+_str_break,x-1)
+		break
+EOF
+endif
+exec "w"
+endfunc
+map <Leader>b :call AddPythonBreak()<CR>
 
 "这个是给python函数的注释，作为__doc__用
 func! CommentPython()
@@ -458,14 +463,14 @@ list_comment_class=[
 	'',
 	'"""'
 	]
-#因为存在缩进，所以这里必须得先取得函数的缩进是多少。然后加上缩进迭代添加注释
+# 因为存在缩进，所以这里必须得先取得函数的缩进是多少。然后加上缩进迭代添加注释
 cb = vim.current.buffer     # 获取当前缓冲区
-#获得当前位置
+# 获得当前位置
 (x,y)=vim.current.window.cursor
-#获得当前行
+# 获得当前行
 line=cb[x-1]
-#首先判断前面有几个缩进啦。
-#然后遍历加上注释
+# 首先判断前面有几个缩进啦。
+# 然后遍历加上注释
 num_space=0
 len_line=len(line)
 while(num_space<len_line):
@@ -473,7 +478,7 @@ while(num_space<len_line):
 		num_space=num_space+1
 	else:
 		s=''.center(num_space+4,' ')
-		#判断是class还是function。
+		# 判断是class还是function。
 		if(line[num_space:].startswith('class')):
 			for i in list_comment_class:
 				# 从x行开始添加注释
@@ -537,7 +542,7 @@ autocmd FileType python :call PythonConfig()
 
 Plug 'davidhalter/jedi-vim' , { 'on':[]}
 	autocmd FileType python set omnifunc=jedi#completions
-	let g:neocomplete#enable_auto_select = 1
+	" let g:neocomplete#enable_auto_select = 1
 	let g:jedi#popup_select_first=1
 	set completeopt=longest,menuone
 	let g:jedi#auto_vim_configuration = 1
@@ -549,7 +554,7 @@ Plug 'davidhalter/jedi-vim' , { 'on':[]}
 	let g:jedi#goto_command = "<leader>d"
 	let g:jedi#goto_assignments_command = "<leader>g"
 	" let g:jedi#goto_definitions_command = ""
-	let g:jedi#documentation_command = "K"
+	let g:jedi#documentation_command = "<leader>k"
 	let g:jedi#usages_command = "<leader>n"
 	" let g:jedi#completions_command = "<C-Space>"
 	let g:jedi#rename_command = "<F2>"
@@ -569,28 +574,33 @@ Plug 'davidhalter/jedi-vim' , { 'on':[]}
 " let g:deoplete#enable_at_startup = 1
 
 
-" Plug 'w0rp/ale'
-	" "始终开启标志列
-	" let g:ale_sign_column_always = 1
-	" let g:ale_set_highlights = 0
-	" "自定义error和warning图标
-	" let g:ale_sign_error = 'E:'
-	" let g:ale_sign_warning = 'W:'
-	" "在vim自带的状态栏中整合ale
-	" " let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
-	" "显示Linter名称,出错或警告等相关信息
-	" " let g:ale_echo_msg_error_str = 'E'
-	" " let g:ale_echo_msg_warning_str = 'W'
-	" " let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-	" " "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-	" nmap sp <Plug>(ale_previous_wrap)
-	" nmap sn <Plug>(ale_next_wrap)
-	" " "<Leader>s触发/关闭语法检查
-	" " " nmap <Leader>s :ALEToggle<CR>
-	" " "<Leader>d查看错误或警告的详细信息
-	" " nmap <Leader>d :ALEDetail<CR>
-	" let g:ale_fix_on_save = 1
-
+Plug 'w0rp/ale'
+	"始终开启标志列
+	let g:ale_sign_column_always = 1
+	let g:ale_set_highlights = 0
+	"自定义error和warning图标
+	let g:ale_sign_error = 'E:'
+	let g:ale_sign_warning = 'W:'
+	" 在vim自带的状态栏中整合ale
+	" let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+	" " 显示Linter名称,出错或警告等相关信息
+	" let g:ale_echo_msg_error_str = 'E'
+	" let g:ale_echo_msg_warning_str = 'W'
+	" let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+	" "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+	nmap sp <Plug>(ale_previous_wrap)
+	nmap sn <Plug>(ale_next_wrap)
+	" "<Leader>s触发/关闭语法检查
+	" " nmap <Leader>s :ALEToggle<CR>
+	" "<Leader>d查看错误或警告的详细信息
+	" nmap <Leader>d :ALEDetail<CR>
+	" Check Python files with flake8 and pylint.
+	" let g:ale_linters = ['flake8', 'pylint']
+	" Fix Python files with autopep8 and yapf.
+	let g:ale_fixers = ['autopep8', 'yapf']
+	" Disable warnings about trailing whitespace for Python files.
+	let g:ale_warn_about_trailing_whitespace = 0
+	let g:ale_python_flake8_args = '--ignore=E501'
 "
 "
 "如下的lsp压根不能补全，可能是我设置问题。
@@ -613,11 +623,11 @@ Plug 'davidhalter/jedi-vim' , { 'on':[]}
 
 "
 " 500 毫秒后调用 LoadPlug，且只调用一次, 见 `:h timer_start()`
-call timer_start(500, 'LoadPlug')
+call timer_start(200, 'LoadPlug')
 function! LoadPlug(timer) abort
   " 手动加载
-  " call plug#load('jedi-vim')
-  call plug#load('python-mode')
+  call plug#load('jedi-vim')
+  " call plug#load('python-mode')
 
 endfunction
 
@@ -628,14 +638,14 @@ endfunction
 	" let g:completor_set_options = 1
 
 Plug  'python-mode/python-mode'  , { 'on': [] }
-	let g:pymode_python = 'python3'
+	" let g:pymode_python = 'python'
 	let g:pymode = 1
 	let g:pymode_path=[]
 	let g:pymode_options = 1
 	let g:pymode_warnings = 1
 	let g:pymode_options_max_line_length = 200
 	"开启python-mode定义的移动方式
-	let g:pymode_motion = 1
+	let g:pymode_motion = 0
 	"按键	功能
 	"[[	Jump to previous class or function (normal, visual, operator modes)
 	"]]	Jump to next class or function (normal, visual, operator modes)
@@ -650,8 +660,8 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 	"let g:pymode_doc_key = 'K'
 	" Override view python doc key shortcut to Ctrl-Shift-d
 	let g:pymode_doc_bind = '<c-f3>'
-	"Linting,代码检查的部分的
-	let g:pymode_lint = 1
+	"Linting,代码检查的部分,我用ale，检查。
+	let g:pymode_lint = 0
 	let g:pymode_lint_ignore="E501"
 	let g:pymode_lint_checker = ['pyflakes','pylint','pep8']
 	"let g:pymode_lint_config = '($VIM)/bundle/Python-mode-klen/pymode/libs/pylama/lint/pylama_pylint/pylint.rc'		
@@ -688,19 +698,19 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 	"自动补全的
 	let g:pymode_rope_completion = 1
 	let g:pymode_rope_complete_on_dot = 1
-	let g:pymode_rope_show_doc_bind = '<leader>k'
+	let g:pymode_rope_show_doc_bind = '<leader>k'  "显示文档
 	let g:pymode_rope_regenerate_on_write = 1 "Regenerate project cache on every save (if file has been modified)
 	"let g:pymode_rope_completion_bind = '<C-Tab>'
 	"<C-c>g跳转到定义处，同时新建竖直窗口打开
 	let g:pymode_rope_goto_definition_bind = '<leader>g'
 	let g:pymode_rope_goto_definition_cmd = 'vnew'
 	let g:pymode_run = 1
-	"let g:pymode_run_bind = '<F5>'
+	let g:pymode_run_bind = '<leader>r'
 	"Folding
 	let g:pymode_folding = 0 "这个是一打开的时候，就折叠的
 
-
-
+"另一个自动补全的
+" Plug 'Valloric/YouCompleteMe'
 
 """"""""""""""""""如下是c#配置"""""""""""""""
 fun CsConfig()
@@ -891,6 +901,8 @@ endif
 endf
 autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdategtags()
 
+
+
 let Gtags_OpenQuickfixWindow = 1
 "在项目文件中搜索匹配的单词（忽略大小写）
 "nmap <a-F3> :Gtags -gi<cr><cr>
@@ -903,6 +915,34 @@ nmap <S-f3> :Gtags -r<cr><cr>
 "不用altkeys映射到窗口列表
 "set winaltkeys=no 
 
+"""""""""""""""""""CSCOPE
+set cscopetag                  " 使用 cscope 作为 tags 命令
+set cscopeprg=D:\gtags\bin\gtags-cscope.exe   " 使用 gtags-cscope 代替 cscope
+Plug 'thorstel/vim-gtags-cscope'
+let GtagsCscope_Auto_Load = 1
+let CtagsCscope_Auto_Map = 1
+let GtagsCscope_Quiet = 1
+"自动加载CSCOPE
+function! Autoloadgtagscscope()
+    let max = 10
+    let dir = './'
+    let i = 0
+    let break = 0
+    while isdirectory(dir) && i < max
+        if filereadable(dir . 'GRTAGS')
+			execute ':cs add  ' . dir . 'GRTAGS'
+			redraw
+            let break = 1
+        endif
+        if break == 1
+            execute 'lcd ' . dir
+            break
+		endif
+        let dir = dir . '../'
+        let i = i + 1
+	endwhile
+endf
+autocmd BufReadPost   *.cpp,*.h,*.c,*.py,*.cs call Autoloadgtagscscope()
 
 """"""""""""""""""格式化代码""""""""""""""""
 "定义FormartSrc()
@@ -929,6 +969,7 @@ endfunc
 "普通模式和插入模式都可以运行吧
 map <c-f8> :call FormartSrc()<CR>
 imap <c-f8> <esc>:call FormartSrc()<CR>
+" autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call FormartSrc()
 
 """"""""""""""""代码检查插件""""""""""""""""""""""""""""""""
 "Bundle 'scrooloose/syntastic'
@@ -973,7 +1014,6 @@ Plug 'lambdalisue/gina.vim'
 "其中git log 用 Gina log 这个显示好些
 "而git diff 用 Gdiff好些
 map <f9> <esc>:Gina 
-map <s-f9> <esc>:AsyncRun git push<cr>
 map <c-f9> <esc>:Gdiff<cr>
 map <a-f9> <esc>:Gina commit -a -m "
 
