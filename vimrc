@@ -46,6 +46,7 @@
 "git相关
 "修改时间
 "异步插件
+"切换缓冲区。
 "
 "
 "
@@ -96,7 +97,7 @@ else
 	set fileencoding=utf-8
 endif
 
-"编码配置
+"编码配置If set to 1, then Latex-Suite will create certain global debug statements which can be printed by doing
 set fileencodings=utf-8,gb18030,gbk,gb2312,cp936,ucs-bom,shift-jis
 "当字符大于这个的时候，会自动换行，取消这个选项吧
 set textwidth=0
@@ -116,7 +117,6 @@ elseif has('unix')
     set backupdir=~/.vim/bakfiles
 	set undodir=~/.vim/undodir
 endif
-set autochdir
 
 " history文件中需要记录的行数，恢复用到。
 set history=1024
@@ -225,18 +225,18 @@ Plug 'majutsushi/Tagbar'
 " Plug 'vim-scripts/surround.vim'
 " "状态栏
 set laststatus=2
-" Plug 'vim-airline/vim-airline'
-" " Plug 'vim-airline/vim-airline-themes'
-	" " let g:airline_powerline_fonts = 1
-	" " let g:airline_theme = 'bubblegum'
-	" " ""开tabline功能,方便查看Buffer和切换，这个功能比较不错"
-	" """我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
-	" let g:airline#extensions#tabline#enabled = 1
-	" let g:airline#extensions#tabline#buffer_nr_show = 1
+Plug 'vim-airline/vim-airline'
+" Plug 'vim-airline/vim-airline-themes'
+	" let g:airline_powerline_fonts = 1
+	" let g:airline_theme = 'bubblegum'
+	" ""开tabline功能,方便查看Buffer和切换，这个功能比较不错"
+	"""我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
+	let g:airline#extensions#tabline#enabled = 1
+	let g:airline#extensions#tabline#buffer_nr_show = 1
 
-	" if !exists('g:airline_symbols')
-		" let g:airline_symbols = {}
-	" endif
+	if !exists('g:airline_symbols')
+		let g:airline_symbols = {}
+	endif
 "
 "树形目录插件
 Plug 'vim-scripts/The-NERD-tree'
@@ -340,7 +340,7 @@ Plug 'drmingdrmer/xptemplate'
    " let g:load_doxygen_syntax = 1
 	" let g:DoxygenToolkit_briefTag_funcName = "yes"
 "缩进插件
-Plug 'Yggdroot/indentLine'
+" Plug 'Yggdroot/indentLine' "这个会导致latex显示乱码。
 
 "Run
 " Plug 'chemzqm/vim-run'
@@ -582,11 +582,11 @@ Plug 'w0rp/ale'
 	let g:ale_sign_error = 'E:'
 	let g:ale_sign_warning = 'W:'
 	" 在vim自带的状态栏中整合ale
-	" let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
-	" " 显示Linter名称,出错或警告等相关信息
-	" let g:ale_echo_msg_error_str = 'E'
-	" let g:ale_echo_msg_warning_str = 'W'
-	" let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+	let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+	" 显示Linter名称,出错或警告等相关信息
+	let g:ale_echo_msg_error_str = 'E'
+	let g:ale_echo_msg_warning_str = 'W'
+	let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 	" "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
 	nmap sp <Plug>(ale_previous_wrap)
 	nmap sn <Plug>(ale_next_wrap)
@@ -603,7 +603,7 @@ Plug 'w0rp/ale'
 	let g:ale_python_flake8_args = '--ignore=E501'
 "
 "
-"如下的lsp压根不能补全，可能是我设置问题。
+""" 如下的lsp压根不prabirshrestha/vim-lsp能补全，可能是我设置问题。
 " Plug 'prabirshrestha/async.vim'
 " Plug 'prabirshrestha/vim-lsp'
 " Plug 'prabirshrestha/asyncomplete.vim'
@@ -702,8 +702,8 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 	let g:pymode_rope_regenerate_on_write = 1 "Regenerate project cache on every save (if file has been modified)
 	"let g:pymode_rope_completion_bind = '<C-Tab>'
 	"<C-c>g跳转到定义处，同时新建竖直窗口打开
-	let g:pymode_rope_goto_definition_bind = '<leader>g'
-	let g:pymode_rope_goto_definition_cmd = 'vnew'
+	let g:pymode_rope_goto_definition_bind = '<leader>d'
+	" let g:pymode_rope_goto_definition_cmd = 'vnew'
 	let g:pymode_run = 1
 	let g:pymode_run_bind = '<leader>r'
 	"Folding
@@ -711,6 +711,8 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 
 "另一个自动补全的
 " Plug 'Valloric/YouCompleteMe'
+" map <Leader>f :YcmCompleter GoToReferences<CR>
+
 
 """"""""""""""""""如下是c#配置"""""""""""""""
 fun CsConfig()
@@ -778,6 +780,13 @@ func CConfig()
 endfunc
 
 autocmd FileType cs :call CConfig()
+
+"""""""""""""""""如下是latex设置""""""""""""""""
+Plug 'vim-latex/vim-latex',{'for':['tex']} 
+" IMPORTANT: win32 users will need to have 'shellslash' set so that latex
+" " can be called correctly.
+set shellslash
+
 
 
 """""""""""""""""如下是lisp的插件""""""""""""
@@ -877,6 +886,8 @@ endf
 autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdateCtags()
 
 """"""""""""""""""gtags""""""""""""""""""""""
+" let g:Gtags_Auto_Update = 1
+
 "自动更新gtags
 function! AutoUpdategtags()
 	if &mod
@@ -901,8 +912,6 @@ endif
 endf
 autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdategtags()
 
-
-
 let Gtags_OpenQuickfixWindow = 1
 "在项目文件中搜索匹配的单词（忽略大小写）
 "nmap <a-F3> :Gtags -gi<cr><cr>
@@ -918,10 +927,11 @@ nmap <S-f3> :Gtags -r<cr><cr>
 """""""""""""""""""CSCOPE
 set cscopetag                  " 使用 cscope 作为 tags 命令
 set cscopeprg=D:\gtags\bin\gtags-cscope.exe   " 使用 gtags-cscope 代替 cscope
-Plug 'thorstel/vim-gtags-cscope'
+" gtags
 let GtagsCscope_Auto_Load = 1
-let CtagsCscope_Auto_Map = 1
+" let CtagsCscope_Auto_Map = 1
 let GtagsCscope_Quiet = 1
+
 "自动加载CSCOPE
 function! Autoloadgtagscscope()
     let max = 10
@@ -929,7 +939,8 @@ function! Autoloadgtagscscope()
     let i = 0
     let break = 0
     while isdirectory(dir) && i < max
-        if filereadable(dir . 'GRTAGS')
+        if filereadable(dir . 'GTAGS')
+			execute ':cs add  ' . dir . 'GTAGS'
 			execute ':cs add  ' . dir . 'GRTAGS'
 			redraw
             let break = 1
@@ -1125,7 +1136,8 @@ endfunc
         " let i = i + 1
     " endwhile
 " endf
-
+set wildmenu wildmode=full 
+set wildchar=<Tab> wildcharm=<C-Z>
 
 "call vundle#end()
 "到这里Vundle就完成了
