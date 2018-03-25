@@ -225,18 +225,18 @@ Plug 'majutsushi/Tagbar'
 " Plug 'vim-scripts/surround.vim'
 " "状态栏
 set laststatus=2
-Plug 'vim-airline/vim-airline'
-" Plug 'vim-airline/vim-airline-themes'
-	" let g:airline_powerline_fonts = 1
-	" let g:airline_theme = 'bubblegum'
-	" ""开tabline功能,方便查看Buffer和切换，这个功能比较不错"
-	"""我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
-	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#buffer_nr_show = 1
+" Plug 'vim-airline/vim-airline'
+" " Plug 'vim-airline/vim-airline-themes'
+	" " let g:airline_powerline_fonts = 1
+	" " let g:airline_theme = 'bubblegum'
+	" " ""开tabline功能,方便查看Buffer和切换，这个功能比较不错"
+	" """我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
+	" let g:airline#extensions#tabline#enabled = 1
+	" let g:airline#extensions#tabline#buffer_nr_show = 1
 
-	if !exists('g:airline_symbols')
-		let g:airline_symbols = {}
-	endif
+	" if !exists('g:airline_symbols')
+		" let g:airline_symbols = {}
+	" endif
 "
 "树形目录插件
 Plug 'vim-scripts/The-NERD-tree'
@@ -276,7 +276,7 @@ Plug 'kien/rainbow_parentheses.vim'
 function AutoPair()
 	:inoremap ( ()<ESC>i
 	:inoremap ) <c-r>=ClosePair(')')<CR>
-	:inoremap { {<CR>}<ESC>O
+	:inoremap { {}<ESC>i
 	:inoremap } <c-r>=ClosePair('}')<CR>
 	:inoremap [ []<ESC>i
 	:inoremap ] <c-r>=ClosePair(']')<CR>
@@ -350,6 +350,8 @@ Plug 'drmingdrmer/xptemplate'
   " \'python': 'python',
   " \}
 "自动添加空格
+"ale插件会做这个东西，并且这个自动加空格的在html种会产生副作用。
+"比如</script>，会在/后边加上一个空格。
 fun AutoSpace()
 		"设置= + - * 前后自动空格
 	" ,后面自动添加空格
@@ -370,11 +372,11 @@ endfun
 
 func! ProgramConfig()
 	call AutoPair()
-	call AutoSpace()
+	" call AutoSpace()
 	let g:ale_fix_on_save = 1
 
 endfunc
-autocmd FileType ruby,eruby,python,javascript,html,css,xml,java,cs,lisp :call ProgramConfig()
+autocmd FileType ruby,eruby,python,xml,java,cs,lisp,html :call ProgramConfig()
 
 " 代码自动提示
 Plug 'vim-scripts/AutoComplPop'
@@ -626,8 +628,8 @@ Plug 'w0rp/ale'
 call timer_start(200, 'LoadPlug')
 function! LoadPlug(timer) abort
   " 手动加载
-  call plug#load('jedi-vim')
-  " call plug#load('python-mode')
+  " call plug#load('jedi-vim')
+  call plug#load('python-mode')
 
 endfunction
 
@@ -703,15 +705,17 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 	"let g:pymode_rope_completion_bind = '<C-Tab>'
 	"<C-c>g跳转到定义处，同时新建竖直窗口打开
 	let g:pymode_rope_goto_definition_bind = '<leader>d'
-	" let g:pymode_rope_goto_definition_cmd = 'vnew'
+	let g:pymode_rope_goto_definition_cmd = 'e'
 	let g:pymode_run = 1
 	let g:pymode_run_bind = '<leader>r'
 	"Folding
 	let g:pymode_folding = 0 "这个是一打开的时候，就折叠的
 
 "另一个自动补全的
-" Plug 'Valloric/YouCompleteMe'
-" map <Leader>f :YcmCompleter GoToReferences<CR>
+Plug 'Valloric/YouCompleteMe'
+map <Leader>f :YcmCompleter GoToReferences<CR>
+" map <Leader>k :YcmCompleter GetDoc<CR>
+" map <Leader>d :YcmCompleter GoTo<CR>
 
 
 """"""""""""""""""如下是c#配置"""""""""""""""
@@ -1011,8 +1015,8 @@ imap <c-f8> <esc>:call FormartSrc()<CR>
 Plug 'airblade/vim-gitgutter'  
 set updatetime=1000
 
-"这个插件不能正常运行。
-Plug 'tpope/vim-fugitive'
+" "这个插件不能正常运行。
+" Plug 'tpope/vim-fugitive'
 "Plug 'neoclide/vim-easygit'
 
 "let g:easygit_enable_command = 1
@@ -1050,7 +1054,7 @@ function! LastChange(...)
 	    if row  == 0
 	        let now = a:1 .  ' Last Change:  '
 	            \. now . send
-	        call append(2, now)
+			" call append(0, now)
 	    else
 	        let curstr = getline(row)
 	        let col = match( curstr , 'Last')
