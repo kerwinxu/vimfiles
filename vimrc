@@ -166,13 +166,15 @@ autocmd FileType java set omnifunc=javacomplete#Complet
 
 "显示配置
 syntax enable
+Plug 'jnurmine/Zenburn'
+Plug 'altercation/vim-colors-solarized'
 if has('gui_running')
-    set background=dark
+  set background=dark
+  colorscheme solarized
 else
-    set background=dark
+  colorscheme Zenburn
 endif
-colorscheme solarized
-let g:solarized_italic=0 | colorscheme solarized
+" let g:solarized_italic=0 | colorscheme solarized
 "colorscheme murphy "old 
 "显示行号
 set nu
@@ -192,9 +194,9 @@ set magic           "使用正则时，除了$ . * ^以外的元字符都要加�
 "自动编码检测
 Plug 'vim-scripts/FencView.vim'
 """"Gnudo是保存更改记录的""""
-" Plug 'sjl/gundo.vim'
-	" let  g:gundo_prefer_python3=1 
-	" map <leader>g :GundoToggle<CR>
+Plug 'sjl/gundo.vim'
+	let  g:gundo_prefer_python3=1 
+	map <leader>g :GundoToggle<CR>
 
 "快速搜索文件的
 Plug 'kien/ctrlp.vim'
@@ -222,7 +224,7 @@ endif
 Plug 'majutsushi/Tagbar'
 "快速配括号等
 "这个跟cscope的快捷键冲突。
-" Plug 'vim-scripts/surround.vim'
+Plug 'vim-scripts/surround.vim'
 " "状态栏
 set laststatus=2
 " Plug 'vim-airline/vim-airline'
@@ -376,7 +378,7 @@ func! ProgramConfig()
 	let g:ale_fix_on_save = 1
 
 endfunc
-autocmd FileType ruby,eruby,python,xml,java,cs,lisp,html :call ProgramConfig()
+autocmd FileType ruby,eruby,python,xml,java,cs,lisp :call ProgramConfig()
 
 " 代码自动提示
 Plug 'vim-scripts/AutoComplPop'
@@ -625,11 +627,11 @@ Plug 'w0rp/ale'
 
 "
 " 500 毫秒后调用 LoadPlug，且只调用一次, 见 `:h timer_start()`
-call timer_start(200, 'LoadPlug')
+autocmd FileType python :call timer_start(20, 'LoadPlug')
 function! LoadPlug(timer) abort
   " 手动加载
-  " call plug#load('jedi-vim')
-  call plug#load('python-mode')
+  call plug#load('jedi-vim')
+  " call plug#load('python-mode')
 
 endfunction
 
@@ -712,10 +714,12 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 	let g:pymode_folding = 0 "这个是一打开的时候，就折叠的
 
 "另一个自动补全的
-Plug 'Valloric/YouCompleteMe'
-map <Leader>f :YcmCompleter GoToReferences<CR>
-" map <Leader>k :YcmCompleter GetDoc<CR>
-" map <Leader>d :YcmCompleter GoTo<CR>
+" Plug 'Valloric/YouCompleteMe'
+" map <Leader>f :YcmCompleter GoToReferences<CR><cr>
+" let g:ycm_min_num_of_chars_for_completion = 99 "关闭补全啦。
+" let g:ycm_auto_trigger = 0
+" map <Leader>k :YcmCompleter GetDoc<CR><cr>
+" map <Leader>d :YcmCompleter GoTo<CR><cr>
 
 
 """"""""""""""""""如下是c#配置"""""""""""""""
@@ -944,8 +948,8 @@ function! Autoloadgtagscscope()
     let break = 0
     while isdirectory(dir) && i < max
         if filereadable(dir . 'GTAGS')
-			execute ':cs add  ' . dir . 'GTAGS'
-			execute ':cs add  ' . dir . 'GRTAGS'
+			execute ':cscope add  ' . dir . 'GTAGS'
+			execute ':cscope add  ' . dir . 'GRTAGS'
 			redraw
             let break = 1
         endif
@@ -1013,6 +1017,7 @@ imap <c-f8> <esc>:call FormartSrc()<CR>
 
 """""""""""""""""""""""如下是git相关"""""""""""""""""""""""""
 Plug 'airblade/vim-gitgutter'  
+let g:gitgutter_max_signs = 500
 set updatetime=1000
 
 " "这个插件不能正常运行。
