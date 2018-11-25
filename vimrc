@@ -9,7 +9,7 @@
 "f5		运行
 "f6
 "f7		文档注释
-"f8		IDE			格式化
+"f8		IDE			格式化		生成各种tags
 "f9		: Gina		Gdiff		git push	commit - a - m
 "f10
 "f11
@@ -24,7 +24,6 @@
 " 2，左右左右，“左”在前面。前后前后，“前”也在前面。因此左括号打头则表示向前，右括号打头则表示向后：
      " [[和[] 用来向前跳
      "]] 和][用来向后跳
-
 "看到很多大佬用如下方法来配置，我也试试吧
 "我的层次是
 "打开插件管理
@@ -52,10 +51,14 @@
 "
 """"""""""""""""""如下是打开插件"""""""""""""
 "设置目录
-call plug#begin('E:/home/kerwin/vimfiles/pugged')
-
+if has('win32')
+	call plug#begin('E:/home/kerwin/vimfiles/pugged')
+else
+	call plug#begin('~/.vim/plugged')
+endif
 filetype off
-" Note: Skip initialization for vim - tiny or vim - small.
+" No
+" \te: Skip initialization for vim - tiny or vim - small.
 
 if &compatible
     set nocompatible               " Be iMproved
@@ -169,17 +172,17 @@ syntax enable
 Plug 'jnurmine/Zenburn'
 Plug 'altercation/vim-colors-solarized'
 if has('gui_running')
-  set background=dark
+  set background=light
   colorscheme solarized
 else
-  colorscheme Zenburn
+  " colors Zenburn
 endif
 " let g:solarized_italic=0 | colorscheme solarized
 "colorscheme murphy "old 
 "显示行号
 set nu
 set ruler                   " 打开状态栏标尺
-"set cursorline              " 突出显示当前行
+set cursorline              " 突出显示当前行
 
 "搜索配置
 "搜索忽略大小写
@@ -192,7 +195,7 @@ set incsearch
 set magic           "使用正则时，除了$ . * ^以外的元字符都要加反斜线
 
 "自动编码检测
-Plug 'vim-scripts/FencView.vim'
+" Plug 'vim-scripts/fencview.vim'
 """"Gnudo是保存更改记录的""""
 Plug 'sjl/gundo.vim'
 	let  g:gundo_prefer_python3=1 
@@ -243,8 +246,8 @@ set laststatus=2
 "树形目录插件
 Plug 'vim-scripts/The-NERD-tree'
 "按f8就是打开一个IDE
-map <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
-imap <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
+	map <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
+	imap <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
 
 "括号高亮，不同颜色的。
 Plug 'kien/rainbow_parentheses.vim'
@@ -564,7 +567,7 @@ Plug 'davidhalter/jedi-vim' , { 'on':[]}
 	let g:jedi#rename_command = "<F2>"
 	" "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
-"试试deoplete.nvim,能补全，不过不如jedi
+" 试试deoplete.nvim,能补全，不过不如jedi
 " if has('nvim')
   " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " else
@@ -573,8 +576,8 @@ Plug 'davidhalter/jedi-vim' , { 'on':[]}
   " Plug 'roxma/vim-hug-neovim-rpc'
 " endif
 " Plug 'zchee/deoplete-jedi' , { 'for':['python']}
-	" " let g:deoplete#sources#jedi#python_path="e:/Anaconda3/python.exe"
-" " Use deoplete.
+	" let g:deoplete#sources#jedi#python_path="e:/Anaconda3/python.exe"
+" Use deoplete.
 " let g:deoplete#enable_at_startup = 1
 
 
@@ -607,23 +610,6 @@ Plug 'w0rp/ale'
 	let g:ale_python_flake8_args = '--ignore=E501'
 "
 "
-""" 如下的lsp压根不prabirshrestha/vim-lsp能补全，可能是我设置问题。
-" Plug 'prabirshrestha/async.vim'
-" Plug 'prabirshrestha/vim-lsp'
-" Plug 'prabirshrestha/asyncomplete.vim'
-" Plug 'prabirshrestha/asyncomplete-lsp.vim'
-	" if executable('pyls')
-		" au User lsp_setup call lsp#register_server({
-			" \ 'name': 'pyls',
-			" \ 'cmd': {server_info->['pyls']},
-			" \ 'whitelist': ['python'],
-			" \ })
-	" endif
-	" let g:lsp_async_completion = 1
-	" let g:lsp_signs_enabled = 1         " enable signs
-	" let g:lsp_diagnostics_echo_cursor = 1 " enable echo under cursor when in normal mode
-	" let g:asyncomplete_auto_popup = 1
-	" autocmd FileType python setlocal omnifunc=lsp#complete
 
 "
 " 500 毫秒后调用 LoadPlug，且只调用一次, 见 `:h timer_start()`
@@ -798,10 +784,10 @@ set shellslash
 
 
 """""""""""""""""如下是lisp的插件""""""""""""
-"Plug 'kovisoft/slimv'
-" let g:slimv_impl = 'sbcl'
-" let g:slimv_swank_cmd = '!start  "D:/SBCL/1.3.18/sbcl.exe"  --load "D:/Vim/bundle/slimv/slime/start-swank.lisp" '
-" let g:paredit_electric_return=1
+Plug 'kovisoft/slimv' ,{'for':['lisp']}
+let g:slimv_impl = 'sbcl'
+let g:slimv_swank_cmd = '!start  "D:/Program Files/Steel Bank Common Lisp/1.4.2/sbcl.exe"  --load "e:/home/kerwin/vimfiles/pugged/slimv/slime/start-swank.lisp" '
+let g:paredit_electric_return=1
 
 """""""""""""""""纯文本"""""""""""""""""""""
 au BufEnter *.txt setlocal ft=txt
@@ -895,6 +881,20 @@ autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdateCtags()
 
 """"""""""""""""""gtags""""""""""""""""""""""
 " let g:Gtags_Auto_Update = 1
+"
+" 这里要有一个创建gtags的函数，顺便创建Ctags吧。
+
+function! CreateTags()
+	"这个方式是简单的，基本上只是调用exe而已
+	"先实现ctags吧。
+	execute ':!start /B cd ./ & ctags -R '
+	"然后gtags。
+	execute ':!start /B cd ./ & gtags.exe'
+endf
+"这里设置shift-f8来调用。
+map <s-F8> :call CreateTags()<cr><cr>
+imap <s-F8> :call CreateTags()<cr><cr>
+
 
 "自动更新gtags
 function! AutoUpdategtags()
@@ -1016,9 +1016,9 @@ imap <c-f8> <esc>:call FormartSrc()<CR>
 
 
 """""""""""""""""""""""如下是git相关"""""""""""""""""""""""""
-Plug 'airblade/vim-gitgutter'  
-let g:gitgutter_max_signs = 500
-set updatetime=1000
+" Plug 'airblade/vim-gitgutter'  
+" let g:gitgutter_max_signs = 500
+" set updatetime=1000
 
 " "这个插件不能正常运行。
 " Plug 'tpope/vim-fugitive'
@@ -1059,7 +1059,8 @@ function! LastChange(...)
 	    if row  == 0
 	        let now = a:1 .  ' Last Change:  '
 	            \. now . send
-			" call append(0, now)
+			" call append(0,
+			" nowa"添加这个注释，表示如果我没有找到那个，就不修改吧。
 	    else
 	        let curstr = getline(row)
 	        let col = match( curstr , 'Last')
