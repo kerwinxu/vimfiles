@@ -9,12 +9,21 @@
 "f5		运行
 "f6
 "f7		文档注释
-"f8		IDE			格式化		生成各种tags
+"f8		IDE			格式化		
 "f9		: Gina		Gdiff		git push	commit - a - m
 "f10
 "f11
 "f12
 "'<leader>k': python - mode中显示函数注释的。
+" <leader>cs	Find symbol (reference) under cursor
+" <leader>cg	Find symbol definition under cursor
+" <leader>cd	Functions called by this function
+" <leader>cc	Functions calling this function
+" <leader>ct	Find text string under cursor
+" <leader>ce	Find egrep pattern under cursor
+" <leader>cf	Find file name under cursor
+" <leader>ci	Find files #including the file name under cursor
+" <leader>ca	Find places where current symbol is assigned
 "
 "gd 转到当前光标所指的局部变量的定义
 "总结是：
@@ -46,6 +55,7 @@
 "修改时间
 "异步插件
 "切换缓冲区。
+"方便浏览的。
 "
 "
 "
@@ -74,7 +84,7 @@ let mapleader = ' '
 if has('win32')
 	source $VIMRUNTIME/vimrc_example.vim
     source $VIMRUNTIME/mswin.vim
-	source D:/gtags/share/gtags/gtags.vim
+	" source D:/gtags/share/gtags/gtags.vim
 	source D:/gtags/share/gtags/gtags-cscope.vim
     behave mswin
 endif
@@ -852,75 +862,102 @@ imap <c-f5> :call CompileAndDebugC()<cr>
 
 """"""""""""""""""ctags""""""""""""""""""""""
 "如下是ctags配置
-set tags+=tags;
-set autochdir
+set tags=./.tags;,.tags
+" set autochdir
 
-"自动更新ctags
-function! AutoUpdateCtags()
-	if &mod
-		let max = 10
-		let dir = './'
-		let i = 0
-		let break = 0
-		while isdirectory(dir) && i < max
-			if filereadable(dir . 'tags')
-				execute ':!start /B  cd ' . dir . ' & ctags -a tags'
-				redraw
-				let break = 1
-			endif
-			if break == 1
-				execute 'lcd ' . dir
-				break
-			endif
-			let dir = dir . '../'
-			let i = i + 1
-		endwhile
-	endif
-endf
-autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdateCtags()
+" "自动更新ctags
+" function! AutoUpdateCtags()
+	" if &mod
+		" let max = 10
+		" let dir = './'
+		" let i = 0
+		" let break = 0
+		" while isdirectory(dir) && i < max
+			" if filereadable(dir . 'tags')
+				" execute ':!start /B  cd ' . dir . ' & ctags -a tags'
+				" redraw
+				" let break = 1
+			" endif
+			" if break == 1
+				" execute 'lcd ' . dir
+				" break
+			" endif
+			" let dir = dir . '../'
+			" let i = i + 1
+		" endwhile
+	" endif
+" endf
+" autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdateCtags()
 
 """"""""""""""""""gtags""""""""""""""""""""""
-" let g:Gtags_Auto_Update = 1
-"
+"""""""""""有个插件可以管理gtags和ctags连接的，自动更新的
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'skywind3000/gutentags_plus' "这个插件是配合如上插件的
+" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+" 同时开启 ctags 和 gtags 支持：
+let g:gutentags_modules = []
+if executable('ctags')
+	let g:gutentags_modules += ['ctags']
+endif
+if executable('gtags-cscope') && executable('gtags')
+	let g:gutentags_modules += ['gtags_cscope']
+endif
+" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+" let g:gutentags_cache_dir = expand('~/.cache/tags')
+
+" forbid gutentags adding gtags databases
+let g:gutentags_auto_add_gtags_cscope = 0
+
+" 配置 ctags 的参数
+" let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+" let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+" let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+" let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+
+
+
 " 这里要有一个创建gtags的函数，顺便创建Ctags吧。
 
-function! CreateTags()
-	"这个方式是简单的，基本上只是调用exe而已
-	"先实现ctags吧。
-	execute ':!start /B cd ./ & ctags -R '
-	"然后gtags。
-	execute ':!start /B cd ./ & gtags.exe'
-endf
+" function! CreateTags()
+	" "这个方式是简单的，基本上只是调用exe而已
+	" "先实现ctags吧。
+	" execute ':!start /B cd ./ & ctags -R '
+	" "然后gtags。
+	" execute ':!start /B cd ./ & gtags.exe'
+" endf
 "这里设置shift-f8来调用。
-map <s-F8> :call CreateTags()<cr><cr>
-imap <s-F8> :call CreateTags()<cr><cr>
+" map <s-F8> :call CreateTags()<cr><cr>
+" imap <s-F8> :call CreateTags()<cr><cr>
 
 
 "自动更新gtags
-function! AutoUpdategtags()
-	if &mod
-    let max = 10
-    let dir = './'
-    let i = 0
-    let break = 0
-    while isdirectory(dir) && i < max
-        if filereadable(dir . 'GTAGS')
-			execute ':!start /B  cd ' . dir . ' & gtags -i'
-			redraw
-            let break = 1
-        endif
-        if break == 1
-            execute 'lcd ' . dir
-            break
-		endif
-        let dir = dir . '../'
-        let i = i + 1
-	endwhile
-endif
-endf
-autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdategtags()
+" function! AutoUpdategtags()
+	" if &mod
+    " let max = 10
+    " let dir = './'
+    " let i = 0
+    " let break = 0
+    " while isdirectory(dir) && i < max
+        " if filereadable(dir . 'GTAGS')
+			" execute ':!start /B  cd ' . dir . ' & gtags -i'
+			" redraw
+            " let break = 1
+        " endif
+        " if break == 1
+            " execute 'lcd ' . dir
+            " break
+		" endif
+        " let dir = dir . '../'
+        " let i = i + 1
+	" endwhile
+" endif
+" endf
+" autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdategtags()
 
-let Gtags_OpenQuickfixWindow = 1
+" let Gtags_OpenQuickfixWindow = 1
 "在项目文件中搜索匹配的单词（忽略大小写）
 "nmap <a-F3> :Gtags -gi<cr><cr>
 "在项目文件中搜索光标所在的单词
@@ -941,27 +978,27 @@ let GtagsCscope_Auto_Load = 1
 let GtagsCscope_Quiet = 1
 
 "自动加载CSCOPE
-function! Autoloadgtagscscope()
-    let max = 10
-    let dir = './'
-    let i = 0
-    let break = 0
-    while isdirectory(dir) && i < max
-        if filereadable(dir . 'GTAGS')
-			execute ':cscope add  ' . dir . 'GTAGS'
-			execute ':cscope add  ' . dir . 'GRTAGS'
-			redraw
-            let break = 1
-        endif
-        if break == 1
-            execute 'lcd ' . dir
-            break
-		endif
-        let dir = dir . '../'
-        let i = i + 1
-	endwhile
-endf
-autocmd BufReadPost   *.cpp,*.h,*.c,*.py,*.cs call Autoloadgtagscscope()
+" function! Autoloadgtagscscope()
+    " let max = 10
+    " let dir = './'
+    " let i = 0
+    " let break = 0
+    " while isdirectory(dir) && i < max
+        " if filereadable(dir . 'GTAGS')
+			" execute ':cscope add  ' . dir . 'GTAGS'
+			" execute ':cscope add  ' . dir . 'GRTAGS'
+			" redraw
+            " let break = 1
+        " endif
+        " if break == 1
+            " execute 'lcd ' . dir
+            " break
+		" endif
+        " let dir = dir . '../'
+        " let i = i + 1
+	" endwhile
+" endf
+" autocmd BufReadPost   *.cpp,*.h,*.c,*.py,*.cs call Autoloadgtagscscope()
 
 """"""""""""""""""格式化代码""""""""""""""""
 "定义FormartSrc()
@@ -1085,6 +1122,8 @@ au BufWritePre Makefile       call LastChange('#')
 au BufWritePre *.php call LastChange('<?php //', '?>')
 au BufWritePre *.html,*htm call LastChange('<!--', '-->')
 
+""""""""""""""""""""""方便浏览的
+Plug 'skywind3000/vim-preview'
 
 
 """"""""""""""""""""""""如下是所有函数方法的"""""""""""""""""
