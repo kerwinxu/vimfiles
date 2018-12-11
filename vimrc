@@ -4,7 +4,7 @@
 "键		单独		Ctrl		shift		Alt
 "f1		帮助
 "f2		重命名
-"f3		ctrlp					gtags - r	vimgrep
+"f3		ctrlp					:Gtags -	vimgrep
 "F4
 "f5		运行
 "f6
@@ -84,7 +84,7 @@ let mapleader = ' '
 if has('win32')
 	source $VIMRUNTIME/vimrc_example.vim
     source $VIMRUNTIME/mswin.vim
-	" source D:/gtags/share/gtags/gtags.vim
+	source D:/gtags/share/gtags/gtags.vim
 	source D:/gtags/share/gtags/gtags-cscope.vim
     behave mswin
 endif
@@ -179,7 +179,7 @@ autocmd FileType java set omnifunc=javacomplete#Complet
 
 "显示配置
 syntax enable
-Plug 'jnurmine/Zenburn'
+" Plug 'jnurmine/Zenburn'
 Plug 'altercation/vim-colors-solarized'
 if has('gui_running')
   set background=light
@@ -209,28 +209,35 @@ set magic           "使用正则时，除了$ . * ^以外的元字符都要加�
 """"Gnudo是保存更改记录的""""
 Plug 'sjl/gundo.vim'
 	let  g:gundo_prefer_python3=1 
-	map <leader>g :GundoToggle<CR>
+	map <leader>h :GundoToggle<CR>
 
 "快速搜索文件的
-Plug 'kien/ctrlp.vim'
-	let g:ctrlp_map = '<f3>'
-	let g:ctrlp_cmd = 'CtrlP'
-	let g:ctrlp_working_path_mode = 'ra'
-	let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
+" Plug 'kien/ctrlp.vim'
+	" let g:ctrlp_map = '<f3>'
+	" let g:ctrlp_cmd = 'CtrlP'
+	" let g:ctrlp_working_path_mode = 'ra'
+	" let g:ctrlp_user_command = 'ag %s -l --nocolor -g'  " Windows
+	" let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
 
-Plug 'junegunn/fzf.vim'
-
-
+" 这个fzf不好使。
+" Plug 'junegunn/fzf' , { 'dir': '~/.fzf', 'do': './install --all' }
+" Plug 'junegunn/fzf.vim'
+" nnoremap <silent> <Leader>f :Files<CR>
+" nnoremap <silent> <Leader>b :Buffers<CR>
 " map <a-F3> :copen<cr>:vimgrep // **
 " imap <a-F3> <esc>:copen<cr>:vimgrep // **
+"
+"
+Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' }
+let g:Lf_ShortcutF = '<f3>'
 
-map <a-F3> :Ack 
-imap <a-F3> :Ack 
 
 "快速搜索文件中的内容的
 if executable('ag')
 	Plug 'mileszs/ack.vim'
 	let g:ackprg = 'ag --vimgrep'
+	map <a-F3> :Ack 
+	imap <a-F3> :Ack 
 endif
 
 "tagbar是一个taglist的替代品，比taglist更适合c++使用，函数能够按类区分，支持按类折叠显示等，
@@ -659,7 +666,7 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 	let g:pymode_doc = 1
 	"let g:pymode_doc_key = 'K'
 	" Override view python doc key shortcut to Ctrl-Shift-d
-	let g:pymode_doc_bind = '<c-f3>'
+	let g:pymode_doc_bind = '<leader>k'
 	"Linting,代码检查的部分,我用ale，检查。
 	let g:pymode_lint = 0
 	let g:pymode_lint_ignore="E501"
@@ -691,7 +698,7 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 	"高亮空格错误
 	let g:pymode_syntax_space_errors = g:pymode_syntax_all
 	"rope setting
-	let g:pymode_rope = 1
+	let g:pymode_rope = 0
 	let g:pymode_rope_lookup_project = 0 "一定要加这个，要不然遇到中文目录会乱码 的
 	let g:pymode_rope_rename_bind = '<F2>' "改名的
 	let g:pymode_rope_autoimport = 1
@@ -909,7 +916,7 @@ endif
 " let g:gutentags_cache_dir = expand('~/.cache/tags')
 
 " forbid gutentags adding gtags databases
-let g:gutentags_auto_add_gtags_cscope = 0
+let g:gutentags_auto_add_gtags_cscope = 1
 
 " 配置 ctags 的参数
 " let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
@@ -965,40 +972,40 @@ let g:gutentags_auto_add_gtags_cscope = 0
 "跳转到光标所在函数的定义
 "nmap <C- :Gtags<cr><cr> 
 "搜索光标所在函数的引用
-nmap <S-f3> :Gtags -r<cr><cr>
+nmap <S-f3> :Gtags -
 "不用altkeys映射到窗口列表
 "set winaltkeys=no 
 
 """""""""""""""""""CSCOPE
 set cscopetag                  " 使用 cscope 作为 tags 命令
-set cscopeprg=D:\gtags\bin\gtags-cscope.exe   " 使用 gtags-cscope 代替 cscope
+set cscopeprg=D:/gtags/bin/gtags-cscope.exe   " 使用 gtags-cscope 代替 cscope
 " gtags
 let GtagsCscope_Auto_Load = 1
 " let CtagsCscope_Auto_Map = 1
 let GtagsCscope_Quiet = 1
 
-"自动加载CSCOPE
-" function! Autoloadgtagscscope()
-    " let max = 10
-    " let dir = './'
-    " let i = 0
-    " let break = 0
-    " while isdirectory(dir) && i < max
-        " if filereadable(dir . 'GTAGS')
-			" execute ':cscope add  ' . dir . 'GTAGS'
-			" execute ':cscope add  ' . dir . 'GRTAGS'
-			" redraw
-            " let break = 1
-        " endif
-        " if break == 1
-            " execute 'lcd ' . dir
-            " break
-		" endif
-        " let dir = dir . '../'
-        " let i = i + 1
-	" endwhile
-" endf
-" autocmd BufReadPost   *.cpp,*.h,*.c,*.py,*.cs call Autoloadgtagscscope()
+" 自动加载CSCOPE
+function! Autoloadgtagscscope()
+	let max = 10
+	let dir = './'
+	let i = 0
+	let break = 0
+	while isdirectory(dir) && i < max
+		if filereadable(dir . 'GTAGS')
+			execute ':cs add  ' . dir . 'GTAGS'
+			execute ':cs add  ' . dir . 'GRTAGS'
+			redraw
+			let break = 1
+		endif
+		if break == 1
+			execute 'lcd ' . dir
+			break
+		endif
+		let dir = dir . '../'
+		let i = i + 1
+	endwhile
+endf
+autocmd BufReadPost   *.cpp,*.h,*.c,*.py,*.cs call Autoloadgtagscscope()
 
 """"""""""""""""""格式化代码""""""""""""""""
 "定义FormartSrc()
@@ -1027,30 +1034,6 @@ map <c-f8> :call FormartSrc()<CR>
 imap <c-f8> <esc>:call FormartSrc()<CR>
 " autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call FormartSrc()
 
-""""""""""""""""代码检查插件""""""""""""""""""""""""""""""""
-"Bundle 'scrooloose/syntastic'
-    ""### syntastic  ...
-    "let g:syntastic_error_symbol='>>'
-    "let g:syntastic_warning_symbol='>'
-    "let g:syntastic_check_on_open=1     "在打开文件的时候检查
-    "let g:syntastic_check_on_wq=0
-    ""let g:syntastic_python_python_exec = 'python2'      "Configure the python checker to call a Python 3 interpreter rather than Python 2
-    "let g:syntastic_enable_highlighting=1
-    ""let g:syntastic_python3_checkers=['pyflakes', 'flake8'] "查看支持的选项https://github.com/scrooloose/syntastic/wiki/Syntax-Checkers，这是指定检测python3的语法错误
-    ""let g:syntastic_python_checkers=['pyflakes', 'flake8', 'pylint'] "查看支持的选项https://github.com/scrooloose/syntastic/wiki/Syntax-Checkers，这是指定检测python2的语法错误
-    "let g:SyntasticCheck=['pyflakes', 'flake8']    "这是指定所有的语言的语法检测机制，最好不要用
-    "let g:syntastic_javascript_checkers = ['jsl', 'jshint']
-    "let g:syntastic_html_checkers=['tidy', 'jshint']
-    "
-    "set statusline+=%#warningmsg#
-    "set statusline+=%{SyntasticStatuslineFlag()}
-    "set statusline+=%*
-    "let g:syntastic_always_populate_loc_list = 1
-    "let g:syntastic_auto_loc_list = 1       "vim打开的时候，在状态栏下面显示错误栏
-    "let g:syntastic_check_on_open = 1
-    "let g:syntastic_check_on_wq = 0
-    ""### end syntastic ...
-
 
 """""""""""""""""""""""如下是git相关"""""""""""""""""""""""""
 " Plug 'airblade/vim-gitgutter'  
@@ -1058,7 +1041,7 @@ imap <c-f8> <esc>:call FormartSrc()<CR>
 " set updatetime=1000
 
 " "这个插件不能正常运行。
-" Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 "Plug 'neoclide/vim-easygit'
 
 "let g:easygit_enable_command = 1
@@ -1162,29 +1145,7 @@ func! RunResult()
 
     endif
 endfunc
-"如下是别人编写的一个自动加载上层目录的CSCOPE的。
-" function! AutoLoadCTagsAndCScope()
-    " let max = 5
-    " let dir = './'
-    " let i = 0
-    " let break = 0
-    " while isdirectory(dir) && i < max
-        " if filereadable(dir . 'cscope.out') 
-            " execute 'cs add ' . dir . 'cscope.out'
-            " let break = 1
-		" endif
-        " if filereadable(dir . 'tags')
-            " execute 'set tags +=' . dir . 'tags'
-            " let break = 1
-        " endif
-        " if break == 1
-            " execute 'lcd ' . dir
-            " break
-        " endif
-        " let dir = dir . '../'
-        " let i = i + 1
-    " endwhile
-" endf
+
 set wildmenu wildmode=full 
 set wildchar=<Tab> wildcharm=<C-Z>
 
