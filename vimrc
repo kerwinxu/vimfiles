@@ -212,11 +212,11 @@ Plug 'sjl/gundo.vim'
 	map <leader>h :GundoToggle<CR>
 
 "快速搜索文件的
-" Plug 'kien/ctrlp.vim'
-	" let g:ctrlp_map = '<f3>'
-	" let g:ctrlp_cmd = 'CtrlP'
-	" let g:ctrlp_working_path_mode = 'ra'
-	" let g:ctrlp_user_command = 'ag %s -l --nocolor -g'  " Windows
+Plug 'kien/ctrlp.vim'
+	let g:ctrlp_map = '<f3>'
+	let g:ctrlp_cmd = 'CtrlP'
+	let g:ctrlp_working_path_mode = 'ra'
+	let g:ctrlp_user_command = 'ag %s -l --nocolor -g "" '  " Windows
 	" let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
 
 " 这个fzf不好使。
@@ -228,9 +228,10 @@ Plug 'sjl/gundo.vim'
 " imap <a-F3> <esc>:copen<cr>:vimgrep // **
 "
 "
-Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' }
-let g:Lf_ShortcutF = '<f3>'
-
+" Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' }
+" let g:Lf_ShortcutF = '<f3>'
+" "\p 打开函数列表
+" noremap <Leader>p :LeaderfFunction<cr>
 
 "快速搜索文件中的内容的
 if executable('ag')
@@ -915,8 +916,10 @@ endif
 " 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
 " let g:gutentags_cache_dir = expand('~/.cache/tags')
 
-" forbid gutentags adding gtags databases
-let g:gutentags_auto_add_gtags_cscope = 1
+let g:gutentags_auto_add_gtags_cscope = 0
+
+" change focus to quickfix window after search (optional).
+let g:gutentags_plus_switch = 1
 
 " 配置 ctags 的参数
 " let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
@@ -1005,7 +1008,7 @@ function! Autoloadgtagscscope()
 		let i = i + 1
 	endwhile
 endf
-autocmd BufReadPost   *.cpp,*.h,*.c,*.py,*.cs call Autoloadgtagscscope()
+" autocmd BufReadPost   *.cpp,*.h,*.c,*.py,*.cs call Autoloadgtagscscope()
 
 """"""""""""""""""格式化代码""""""""""""""""
 "定义FormartSrc()
