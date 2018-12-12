@@ -249,17 +249,17 @@ Plug 'vim-scripts/surround.vim'
 " "状态栏
 set laststatus=2
 " Plug 'vim-airline/vim-airline'
-" " Plug 'vim-airline/vim-airline-themes'
-	" " let g:airline_powerline_fonts = 1
-	" " let g:airline_theme = 'bubblegum'
-	" " ""开tabline功能,方便查看Buffer和切换，这个功能比较不错"
-	" """我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
-	" let g:airline#extensions#tabline#enabled = 1
-	" let g:airline#extensions#tabline#buffer_nr_show = 1
+" Plug 'vim-airline/vim-airline-themes'
+	" let g:airline_powerline_fonts = 1
+	" let g:airline_theme = 'bubblegum'
+	" ""开tabline功能,方便查看Buffer和切换，这个功能比较不错"
+	"""我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
+	let g:airline#extensions#tabline#enabled = 1
+	let g:airline#extensions#tabline#buffer_nr_show = 1
 
-	" if !exists('g:airline_symbols')
-		" let g:airline_symbols = {}
-	" endif
+	if !exists('g:airline_symbols')
+		let g:airline_symbols = {}
+	endif
 "
 "树形目录插件
 Plug 'vim-scripts/The-NERD-tree'
@@ -718,10 +718,11 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 	let g:pymode_folding = 0 "这个是一打开的时候，就折叠的
 
 "另一个自动补全的
+"在python自动补全，不如jedi-vim，典型的是from sys 不会自动补全后边的import
 " Plug 'Valloric/YouCompleteMe'
 " map <Leader>f :YcmCompleter GoToReferences<CR><cr>
-" let g:ycm_min_num_of_chars_for_completion = 99 "关闭补全啦。
-" let g:ycm_auto_trigger = 0
+" " let g:ycm_min_num_of_chars_for_completion = 99 "关闭补全啦。
+" let g:ycm_auto_trigger = 1
 " map <Leader>k :YcmCompleter GetDoc<CR><cr>
 " map <Leader>d :YcmCompleter GoTo<CR><cr>
 
@@ -1059,6 +1060,7 @@ Plug 'lambdalisue/gina.vim'
 map <f9> <esc>:Gina 
 map <c-f9> <esc>:Gdiff<cr>
 map <a-f9> <esc>:Gina commit -a -m "
+map <s-f9> <esc>:Gina push <cr>
 
 
 """""""""""""""""""""修改时间"""""""""""""""""""""""""""""""
