@@ -1,4 +1,4 @@
-﻿"Author: kerwin
+﻿""Author: kerwin
 "这个是我的vim配置，用在gvim上。
 "如下是一些f键的按键
 "键		单独		Ctrl		shift		Alt
@@ -10,13 +10,11 @@
 "f6
 "f7		文档注释
 "f8		IDE			格式化		
-"f9		: Gina		Gdiff		git push	commit - a - m
-"f10
+"f9		加断点	
+"f10		:Gina		Gdiff		git push	commit - a - m
 "f11
-"f12
+"f12     跳转到定义				查找引用
 "'<leader>k': python - mode中显示函数注释的。
-" <leader>cs	Find symbol (reference) under cursor
-" <leader>cg	Find symbol definition under cursor
 " <leader>cd	Functions called by this function
 " <leader>cc	Functions calling this function
 " <leader>ct	Find text string under cursor
@@ -24,6 +22,9 @@
 " <leader>cf	Find file name under cursor
 " <leader>ci	Find files #including the file name under cursor
 " <leader>ca	Find places where current symbol is assigned
+"<leader>h		打开更改记录
+"cs "normal模式下vim-scripts/surround.vim,快速的更改括号的，
+"顺便讲匹配的括号一起更换了。
 "
 "gd 转到当前光标所指的局部变量的定义
 "总结是：
@@ -66,6 +67,7 @@ if has('win32')
 else
 	call plug#begin('~/.vim/plugged')
 endif
+
 filetype off
 " No
 " \te: Skip initialization for vim - tiny or vim - small.
@@ -77,22 +79,19 @@ endif
 
 "
 """"""""""""""""""如下是通用配置"""""""""""""
-
+"设置leader键
 let mapleader = ' '
 " set fileformats = unix, dos
+" 默认编码就是utf-8
+set fileencoding=utf-8
 "判断操作系统
 if has('win32')
+	""加载基本的
 	source $VIMRUNTIME/vimrc_example.vim
     source $VIMRUNTIME/mswin.vim
 	source D:/gtags/share/gtags/gtags.vim
 	source D:/gtags/share/gtags/gtags-cscope.vim
-    behave mswin
-endif
-"vim 基本配置
-"编码配置
-if has("win32")
-	"set fileencoding = chinese
-    set fileencoding=utf-8
+    behave mswin "鼠标运行模式为windows模式
 	if has('gui')
 		"如下的设置能保证在gvim，vim 中中文是没问题的.
 		set encoding=utf-8
@@ -103,11 +102,15 @@ if has("win32")
 		source $VIMRUNTIME/menu.vim
 		"解决consle输出乱码
 		language messages zh_CN.utf-8
-		"
 		set guifont=Dejavu_Sans_Mono:h11:cANSI
 	endif
+	""""""""""""设置备份及备份目录。
+    set backupdir=d:\vim\bakfiles
+	set undodir=d:\vim\undodir
 else
-	set fileencoding=utf-8
+	"当作unix吧。
+    set backupdir=~/.vim/bakfiles
+	set undodir=~/.vim/undodir
 endif
 
 "编码配置If set to 1, then Latex-Suite will create certain global debug statements which can be printed by doing
@@ -121,15 +124,7 @@ set syntax=on
 "共享剪贴板  
 set clipboard+=unnamed
 
-""""""""""""设置备份及备份目录。
 set backspace=indent,eol,start
-if has('win32')
-    set backupdir=d:\vim\bakfiles
-	set undodir=d:\vim\undodir
-elseif has('unix')
-    set backupdir=~/.vim/bakfiles
-	set undodir=~/.vim/undodir
-endif
 
 " history文件中需要记录的行数，恢复用到。
 set history=1024
@@ -145,10 +140,9 @@ set iskeyword+=_,$,@,%,#,-
 " 可以在buffer的任何地方使用鼠标（类似office中在工作区双击鼠标定位）
 set mouse=a
 set selection=exclusive
-set selectmode=mouse,key
+set selectmode=mouse,key 
 " 通过使用: commands命令，告诉我们文件的哪一行被改变过
-set report=0
-" 在被分割的窗口间显示空白，便于阅读
+set report=0  " 在被分割的窗口间显示空白，便于阅读
 set fillchars=vert:\ ,stl:\ ,stlnc:\
 " 高亮显示匹配的括号
 set showmatch
@@ -159,7 +153,7 @@ set scrolloff=3
 "反显光标当前行颜色
 if has("gui_running")
 	set cursorline
-	hi cursorline guibg=#333333
+	" hi cursorline guibg=#333333
 endif
 "自动补全  
 filetype plugin indent on
@@ -167,18 +161,16 @@ set completeopt=longest,menu
 "自动补全命令时候使用菜单式匹配列表  
 set wildmenu
 autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-""""""""
 " autocmd FileType python set omnifunc=python3complete#Complete
-"""""""""
-
 autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 autocmd FileType java set omnifunc=javacomplete#Complet
-
+"用于命令行的补全，tab
+set wildmenu  wildmode=longest,list,full
+set wildchar=<Tab> wildcharm=<C-Z>
 "显示配置
-syntax enable
 " Plug 'jnurmine/Zenburn'
 Plug 'altercation/vim-colors-solarized'
 if has('gui_running')
@@ -219,20 +211,6 @@ Plug 'kien/ctrlp.vim'
 	let g:ctrlp_user_command = 'ag %s -l --nocolor -g "" '  " Windows
 	" let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
 
-" 这个fzf不好使。
-" Plug 'junegunn/fzf' , { 'dir': '~/.fzf', 'do': './install --all' }
-" Plug 'junegunn/fzf.vim'
-" nnoremap <silent> <Leader>f :Files<CR>
-" nnoremap <silent> <Leader>b :Buffers<CR>
-" map <a-F3> :copen<cr>:vimgrep // **
-" imap <a-F3> <esc>:copen<cr>:vimgrep // **
-"
-"
-" Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' }
-" let g:Lf_ShortcutF = '<f3>'
-" "\p 打开函数列表
-" noremap <Leader>p :LeaderfFunction<cr>
-
 "快速搜索文件中的内容的
 if executable('ag')
 	Plug 'mileszs/ack.vim'
@@ -242,27 +220,28 @@ if executable('ag')
 endif
 
 "tagbar是一个taglist的替代品，比taglist更适合c++使用，函数能够按类区分，支持按类折叠显示等，
-Plug 'majutsushi/Tagbar'
+Plug 'majutsushi/Tagbar' ,{'on':'TagbarToggle'} "触发时才加载
 "快速配括号等
 "这个跟cscope的快捷键冲突。
 Plug 'vim-scripts/surround.vim'
 " "状态栏
 set laststatus=2
+"不打开这个，是因为启动速度太慢啦。
 " Plug 'vim-airline/vim-airline'
 " Plug 'vim-airline/vim-airline-themes'
 	" let g:airline_powerline_fonts = 1
 	" let g:airline_theme = 'bubblegum'
 	" ""开tabline功能,方便查看Buffer和切换，这个功能比较不错"
-	"""我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
-	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#buffer_nr_show = 1
+	" ""我还省去了minibufexpl插件，因为我习惯在1个Tab下用多个buffer"
+	" let g:airline#extensions#tabline#enabled = 1
+	" let g:airline#extensions#tabline#buffer_nr_show = 1
 
-	if !exists('g:airline_symbols')
-		let g:airline_symbols = {}
-	endif
+	" if !exists('g:airline_symbols')
+		" let g:airline_symbols = {}
+	" endif
 "
 "树形目录插件
-Plug 'vim-scripts/The-NERD-tree'
+Plug 'vim-scripts/The-NERD-tree' ,{'on':'NERDTreeToggle'} "触发时才加载
 "按f8就是打开一个IDE
 	map <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
 	imap <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
@@ -287,7 +266,6 @@ Plug 'kien/rainbow_parentheses.vim'
     \ ['darkred',     'DarkOrchid3'],
     \ ['red',         'firebrick3'],
     \ ]
-
 	"always on
 	au VimEnter * RainbowParenthesesToggle
 	au Syntax * RainbowParenthesesLoadRound
@@ -335,12 +313,12 @@ function! EqualSign(char)
         endif 
     endif
 endf
-" original repos on github<br>Bundle 'mattn/zencoding-vim'
 " 代码补全的 快速自动完成一些if、switch、for、while结构模板代码,Ctrl-\组合键即可完成代码补全
-Plug 'drmingdrmer/xptemplate'
+" 以后再用这个吧，
+" Plug 'drmingdrmer/xptemplate'
 
 " 如下的这个是自动写注释的
-" Plug  'vim-scripts/DoxygenToolkit.vim' 
+" Plug  'vim-scripts/DoxygenToolkit.vim' , { 'for':['c','cpp']}
 	" let g:DoxygenToolkit_briefTag_pre="@Synopsis      "   
 	" let g:DoxygenToolkit_paramTag_pre="@Param         "   
 	" let g:DoxygenToolkit_returnTag   ="@Returns       "   
@@ -362,42 +340,8 @@ Plug 'drmingdrmer/xptemplate'
    " let g:doxygen_enhanced_color = 1
    " let g:load_doxygen_syntax = 1
 	" let g:DoxygenToolkit_briefTag_funcName = "yes"
-"缩进插件
-" Plug 'Yggdroot/indentLine' "这个会导致latex显示乱码。
-
-"Run
-" Plug 'chemzqm/vim-run'
-" let g:vim_run_command_map = {
-  " \'javascript': 'node',
-  " \'php': 'php',
-  " \'python': 'python',
-  " \}
-"自动添加空格
-"ale插件会做这个东西，并且这个自动加空格的在html种会产生副作用。
-"比如</script>，会在/后边加上一个空格。
-fun AutoSpace()
-		"设置= + - * 前后自动空格
-	" ,后面自动添加空格
-    inoremap <buffer>= <c-r>=EqualSign('=')<CR>
-    inoremap <buffer>+ <c-r>=EqualSign('+')<CR>
-    inoremap <buffer>- <c-r>=EqualSign('-')<CR>
-    inoremap <buffer>* <c-r>=EqualSign('*')<CR>
-    inoremap <buffer>/ <c-r>=EqualSign('/')<CR>
-    inoremap <buffer>> <c-r>=EqualSign('>')<CR>
-    inoremap <buffer>< <c-r>=EqualSign('<')<CR>
-    inoremap <buffer>! <c-r>=EqualSign('!')<CR>
-"    inoremap <buffer>: <c-r>=Swap()<CR>
-    inoremap <buffer>, ,<space>
-    inoremap <buffer># #<space>
-	"实现+-*/前后自动添加空格，逗号后面自动添加空格，适用python
-	"支持+= -+ *= /+格式
-endfun
-
 func! ProgramConfig()
 	call AutoPair()
-	" call AutoSpace()
-	let g:ale_fix_on_save = 1
-
 endfunc
 autocmd FileType ruby,eruby,python,xml,java,cs,lisp :call ProgramConfig()
 
@@ -408,9 +352,8 @@ Plug 'vim-scripts/AutoComplPop'
 
 Plug 'vim-scripts/YankRing.vim'
 
-
 "快速注释代码
-Plug 'vim-scripts/The-NERD-Commenter'
+Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua']}
 	" Add spaces after comment delimiters by default
 	let g:NERDSpaceDelims = 1
 	" Use compact syntax for prettified multi-line comments
@@ -439,7 +382,9 @@ func! HeaderPython()
 	normal k
 	normal A
 endfunc
+autocmd BufNewFile *.py  :call HeaderPython()
 "
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "这个是给python添加调试的
 func! AddPythonBreak()
 if has('python3')
@@ -466,8 +411,8 @@ EOF
 endif
 exec "w"
 endfunc
-map <Leader>b :call AddPythonBreak()<CR>
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "这个是给python函数的注释，作为__doc__用
 func! CommentPython()
 if has('python3')
@@ -519,31 +464,7 @@ while(num_space<len_line):
 EOF
 endif
 endfunc
-
-map <f7> :call CommentPython()<CR>
-imap <f7> <ESC>:call CommentPython()<CR>
-
-"用py2exe的，废弃了吧。
-func! HeaderSetupPython()
-	call setline(1, "#!/usr/bin/env python")
-    call append(1, "# -*- coding: utf-8 -*-")
-	call append(2, "# File Name: " . expand("%"))
-    call append(2, "# Author:  kerwin.cn@gmail.com" )
-	call append(3, "# Created Time:" . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
-	call append(4, "# Last Change: " . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
-	call setline(5,"")
-	call append(6,"from distutils.core import setup")
-	call append(7,"import py2exe, sys")\
-	call append(8,"sys.argv.append('py2exe')")
-	call append(9,"options = {\"py2exe\":{\"compressed\": 1, \"optimize\": 2, \"bundle_files\": 1}}")
-	call append(10,"setup(console=[\"" . strpart( expand("%"),5) . "\"])")
-    normal G
-    normal o
-    normal o
-endfunc
-
-autocmd BufNewFile *.py  :call HeaderPython()
-
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 func! PythonConfig()
 	"set foldmethod=indent "代码折叠只以缩进为依据
 	setlocal foldlevelstart=99	"默认不折叠
@@ -561,6 +482,12 @@ func! PythonConfig()
 	let g:python_host_skip_check=1
 	let g:python3_host_prog = 'd:/Anaconda3/python.exe'
 	" exec ":AcpDisable"
+	" python键的配置
+	" 只有python的才可以加这个断点吧
+	map <f9> :call AddPythonBreak()<CR> 
+	"python的注释的，以后看看做成所有语言的，但好像有个注释插件。
+	map <f7> :call CommentPython()<CR>
+	imap <f7> <ESC>:call CommentPython()<CR>
 endfunc
 
 autocmd FileType python :call PythonConfig()
@@ -585,21 +512,8 @@ Plug 'davidhalter/jedi-vim' , { 'on':[]}
 	let g:jedi#rename_command = "<F2>"
 	" "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
-" 试试deoplete.nvim,能补全，不过不如jedi
-" if has('nvim')
-  " Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-" else
-  " Plug 'Shougo/deoplete.nvim'
-  " Plug 'roxma/nvim-yarp'
-  " Plug 'roxma/vim-hug-neovim-rpc'
-" endif
-" Plug 'zchee/deoplete-jedi' , { 'for':['python']}
-	" let g:deoplete#sources#jedi#python_path="e:/Anaconda3/python.exe"
-" Use deoplete.
-" let g:deoplete#enable_at_startup = 1
-
-
-Plug 'w0rp/ale'
+Plug 'w0rp/ale' , { 'for':['python','c','cpp']}
+	let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
 	"始终开启标志列
 	let g:ale_sign_column_always = 1
 	let g:ale_set_highlights = 0
@@ -620,17 +534,20 @@ Plug 'w0rp/ale'
 	" "<Leader>d查看错误或警告的详细信息
 	" nmap <Leader>d :ALEDetail<CR>
 	" Check Python files with flake8 and pylint.
-	" let g:ale_linters = ['flake8', 'pylint']
+	let g:ale_linters =	{'python': ['flake8','pylint']}
 	" Fix Python files with autopep8 and yapf.
-	let g:ale_fixers = ['autopep8', 'yapf']
+	let g:ale_fixers = {'python':['autopep8', 'yapf']}
 	" Disable warnings about trailing whitespace for Python files.
 	let g:ale_warn_about_trailing_whitespace = 0
 	let g:ale_python_flake8_args = '--ignore=E501'
+	let g:ale_fix_on_save = 1 "保存的时候自动更改格式错误。
+	" Write this in your vimrc file
+	" let g:ale_set_loclist = 0
+	" let g:ale_set_quickfix = 1
 "
 "
-
 "
-" 500 毫秒后调用 LoadPlug，且只调用一次, 见 `:h timer_start()`
+" 毫秒后调用 LoadPlug，且只调用一次, 见 `:h timer_start()`
 autocmd FileType python :call timer_start(20, 'LoadPlug')
 function! LoadPlug(timer) abort
   " 手动加载
@@ -639,11 +556,6 @@ function! LoadPlug(timer) abort
 
 endfunction
 
-" Plug 'maralla/completor.vim'
-	" let g:completor_auto_trigger = 1
-	" let g:completor_python_binary = "d:/Anaconda3/python.exe"
-	" let g:completor_auto_close_doc = 0
-	" let g:completor_set_options = 1
 
 Plug  'python-mode/python-mode'  , { 'on': [] }
 	" let g:pymode_python = 'python'
@@ -801,7 +713,6 @@ Plug 'vim-latex/vim-latex',{'for':['tex']}
 set shellslash
 
 
-
 """""""""""""""""如下是lisp的插件""""""""""""
 Plug 'kovisoft/slimv' ,{'for':['lisp']}
 let g:slimv_impl = 'sbcl'
@@ -868,40 +779,15 @@ map <c-f5> :call CompileAndDebugC()<cr>
 imap <c-f5> :call CompileAndDebugC()<cr>
 
 
-
 """"""""""""""""""ctags""""""""""""""""""""""
 "如下是ctags配置
 set tags=./.tags;,.tags
-" set autochdir
-
-" "自动更新ctags
-" function! AutoUpdateCtags()
-	" if &mod
-		" let max = 10
-		" let dir = './'
-		" let i = 0
-		" let break = 0
-		" while isdirectory(dir) && i < max
-			" if filereadable(dir . 'tags')
-				" execute ':!start /B  cd ' . dir . ' & ctags -a tags'
-				" redraw
-				" let break = 1
-			" endif
-			" if break == 1
-				" execute 'lcd ' . dir
-				" break
-			" endif
-			" let dir = dir . '../'
-			" let i = i + 1
-		" endwhile
-	" endif
-" endf
-" autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdateCtags()
+set autochdir
 
 """"""""""""""""""gtags""""""""""""""""""""""
 """""""""""有个插件可以管理gtags和ctags连接的，自动更新的
-Plug 'ludovicchabant/vim-gutentags'
-Plug 'skywind3000/gutentags_plus' "这个插件是配合如上插件的
+Plug 'ludovicchabant/vim-gutentags',{'for':['python','c','cpp']}
+Plug 'skywind3000/gutentags_plus' ,{'for':['python','c','cpp']} "这个插件是配合如上插件的
 " gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
 let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 " 所生成的数据文件的名称
@@ -929,45 +815,6 @@ let g:gutentags_plus_switch = 1
 " let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
 
 
-
-" 这里要有一个创建gtags的函数，顺便创建Ctags吧。
-
-" function! CreateTags()
-	" "这个方式是简单的，基本上只是调用exe而已
-	" "先实现ctags吧。
-	" execute ':!start /B cd ./ & ctags -R '
-	" "然后gtags。
-	" execute ':!start /B cd ./ & gtags.exe'
-" endf
-"这里设置shift-f8来调用。
-" map <s-F8> :call CreateTags()<cr><cr>
-" imap <s-F8> :call CreateTags()<cr><cr>
-
-
-"自动更新gtags
-" function! AutoUpdategtags()
-	" if &mod
-    " let max = 10
-    " let dir = './'
-    " let i = 0
-    " let break = 0
-    " while isdirectory(dir) && i < max
-        " if filereadable(dir . 'GTAGS')
-			" execute ':!start /B  cd ' . dir . ' & gtags -i'
-			" redraw
-            " let break = 1
-        " endif
-        " if break == 1
-            " execute 'lcd ' . dir
-            " break
-		" endif
-        " let dir = dir . '../'
-        " let i = i + 1
-	" endwhile
-" endif
-" endf
-" autocmd BufWrite *.cpp,*.h,*.c,*.py,*.cs call AutoUpdategtags()
-
 " let Gtags_OpenQuickfixWindow = 1
 "在项目文件中搜索匹配的单词（忽略大小写）
 "nmap <a-F3> :Gtags -gi<cr><cr>
@@ -976,7 +823,7 @@ let g:gutentags_plus_switch = 1
 "跳转到光标所在函数的定义
 "nmap <C- :Gtags<cr><cr> 
 "搜索光标所在函数的引用
-nmap <S-f3> :Gtags -
+nmap <S-f3> :Gtags -x 
 "不用altkeys映射到窗口列表
 "set winaltkeys=no 
 
@@ -987,6 +834,11 @@ set cscopeprg=D:/gtags/bin/gtags-cscope.exe   " 使用 gtags-cscope 代替 cscop
 let GtagsCscope_Auto_Load = 1
 " let CtagsCscope_Auto_Map = 1
 let GtagsCscope_Quiet = 1
+"我只是设置这一个比较方便的，跳转到定义的。
+" map <C-]> <esc>:cs find g <C-R>=expand("<cword>")<CR><CR>
+" map <f12> <esc>:cs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <f12> :Gtags<cr><cr>"跳转到光标所在函数的定义
+nmap <s-f12> :Gtags -r<cr><cr>"搜索光标所在函数的引用
 
 " 自动加载CSCOPE
 function! Autoloadgtagscscope()
@@ -1051,16 +903,15 @@ Plug 'tpope/vim-fugitive'
 "let g:easygit_enable_command = 1
 
 Plug 'lambdalisue/gina.vim'
-
 "这个git，我主要需要的是git status , git add  git commit  , git log , git diff
 ", git push
 "我设置f9键为显示git，其他的看看按个最常用吧。
 "其中git log 用 Gina log 这个显示好些
 "而git diff 用 Gdiff好些
-map <f9> <esc>:Gina 
-map <c-f9> <esc>:Gdiff<cr>
-map <a-f9> <esc>:Gina commit -a -m "
-map <s-f9> <esc>:Gina push <cr>
+map <f10> <esc>:Gina 
+map <c-f10> <esc>:Gdiff<cr>
+map <a-f10> <esc>:Gina commit -a -m "
+map <s-f10> <esc>:Gina push <cr>
 
 
 """""""""""""""""""""修改时间"""""""""""""""""""""""""""""""
@@ -1112,47 +963,11 @@ au BufWritePre *.html,*htm call LastChange('<!--', '-->')
 
 """"""""""""""""""""""方便浏览的
 Plug 'skywind3000/vim-preview'
-
-
 """"""""""""""""""""""""如下是所有函数方法的"""""""""""""""""
 
 
-"根据文件扩展名自动编译的
-
-
-"运行编译好的程序
-func! RunResult()
-    exec "w"
-    if search("mpi\.h")!=0
-        exec "!mpirun -np 4 ./%<"
-    elseif &filetype == "cpp"
-        exec "!./%<"
-    elseif &filetype == "c"
-        exec "!./%<"
-    elseif &filetype == 'sh'
-            :!./%
-    elseif &filetype == "python"
-        exec "!python \"%\""
-    elseif &filetype == "java"
-            exec "!java \"%<\""
-    if has('win32')
-        if &filetype == 'html'
-            exec "\"!C:\\Users\\kerwin\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe \"" . l:filePath . "\""
-        elseif &filetype == 'cs'
-            exec "!\"%<.exe\""
-        elseif &filetype == 'lisp'
-            exec "!sbcl --script \"%\""
-        endif
-    elseif has('unix')
-        if &filetype == 'cs'
-            exec "!meno \"%<.exe\""
-        endif
-
-    endif
-endfunc
-
-set wildmenu wildmode=full 
-set wildchar=<Tab> wildcharm=<C-Z>
+"调试的，只合适ubuntu类系统
+" Plug 'vim-vdebug/vdebug'
 
 "call vundle#end()
 "到这里Vundle就完成了
