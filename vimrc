@@ -4,7 +4,7 @@
 "键		单独		Ctrl		shift		Alt
 "f1		帮助
 "f2		重命名
-"f3		ctrlp					:Gtags -	vimgrep
+"f3		ctrlp					:Gtags -x	vimgrep
 "F4
 "f5		运行
 "f6
@@ -171,13 +171,13 @@ autocmd FileType java set omnifunc=javacomplete#Complet
 set wildmenu  wildmode=longest,list,full
 set wildchar=<Tab> wildcharm=<C-Z>
 "显示配置
-" Plug 'jnurmine/Zenburn'
-Plug 'altercation/vim-colors-solarized'
 if has('gui_running')
-  set background=light
-  colorscheme solarized
+	Plug 'altercation/vim-colors-solarized'
+	set background=light
+	colorscheme solarized
 else
-  " colors Zenburn
+	Plug 'jnurmine/Zenburn'
+	colorscheme Zenburn
 endif
 " let g:solarized_italic=0 | colorscheme solarized
 "colorscheme murphy "old 
@@ -217,12 +217,22 @@ if executable('ag')
 	let g:ackprg = 'ag --vimgrep'
 	map <a-F3> :Ack 
 	imap <a-F3> :Ack 
+else 
+	"如果没有ag，就用vim自带的吧
+	map <a-F3> :vimgrep
+	imap <a-F3> :vimgrep
+	" vimgrep /pattern/ %           在当前打开文件中查找
+	" vimgrep /pattern/ *             在当前目录下查找所有
+	" vimgrep /pattern/ **            在当前目录及子目录下查找所有
+	" vimgrep /pattern/ *.c          查找当前目录下所有.c文件
+	" vimgrep /pattern/ **/*         只查找子目录
 endif
+
 
 "tagbar是一个taglist的替代品，比taglist更适合c++使用，函数能够按类区分，支持按类折叠显示等，
 Plug 'majutsushi/Tagbar' ,{'on':'TagbarToggle'} "触发时才加载
 "快速配括号等
-"这个跟cscope的快捷键冲突。
+"这个跟cscope的快捷键冲突。都是cs，
 Plug 'vim-scripts/surround.vim'
 " "状态栏
 set laststatus=2
@@ -341,7 +351,7 @@ endf
    " let g:load_doxygen_syntax = 1
 	" let g:DoxygenToolkit_briefTag_funcName = "yes"
 func! ProgramConfig()
-	call AutoPair()
+	" call AutoPair()
 endfunc
 autocmd FileType ruby,eruby,python,xml,java,cs,lisp :call ProgramConfig()
 
@@ -349,11 +359,14 @@ autocmd FileType ruby,eruby,python,xml,java,cs,lisp :call ProgramConfig()
 Plug 'vim-scripts/AutoComplPop'
 	let g:acp_enableAtStartup = 1
 	let g:acp_behaviorPythonOmniLength = 2
-
+"就比如yy就是复制一行，dd是删除一行，如下这个插件就是做这个的。
 Plug 'vim-scripts/YankRing.vim'
 
+"自动匹配代码的
+Plug 'spf13/vim-autoclose' ,{'for':['python','c','cpp','lua','vim','java']}
+
 "快速注释代码
-Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua']}
+Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua','vim','java']}
 	" Add spaces after comment delimiters by default
 	let g:NERDSpaceDelims = 1
 	" Use compact syntax for prettified multi-line comments
@@ -364,7 +377,7 @@ Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua']}
 	"n\cu : 为光标以下 n 行取消注释
 	"n\cm : 为光标以下 n 行添加块注释
 	"好像emacs的注释就是alt+;，这里也用这个吧。
-	map <a-;> <leader>c<space>
+	map <c-/> <leader>c<space>
 
 
 """"""""""""""""""如下是python的配置"""""""""
@@ -492,27 +505,27 @@ endfunc
 
 autocmd FileType python :call PythonConfig()
 
-Plug 'davidhalter/jedi-vim' , { 'on':[]}
+Plug 'davidhalter/jedi-vim' , { 'for':['python']}
 	autocmd FileType python set omnifunc=jedi#completions
 	" let g:neocomplete#enable_auto_select = 1
 	let g:jedi#popup_select_first=1
-	set completeopt=longest,menuone
+	" set completeopt=longest,menuone
 	let g:jedi#auto_vim_configuration = 1
 	let g:jedi#popup_on_dot = 1
 	if !exists('g:neocomplete#force_omni_input_patterns')
 			let g:neocomplete#force_omni_input_patterns = {}
 	endif
 	let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\)\w*'
-	let g:jedi#goto_command = "<leader>d"
-	let g:jedi#goto_assignments_command = "<leader>g"
+	" let g:jedi#goto_command = "<leader>d"
+	" let g:jedi#goto_assignments_command = "<leader>g"
 	" let g:jedi#goto_definitions_command = ""
 	let g:jedi#documentation_command = "<leader>k"
-	let g:jedi#usages_command = "<leader>n"
+	" let g:jedi#usages_command = "<leader>n"
 	" let g:jedi#completions_command = "<C-Space>"
 	let g:jedi#rename_command = "<F2>"
 	" "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
-Plug 'w0rp/ale' , { 'for':['python','c','cpp']}
+Plug 'w0rp/ale' , { 'for':['c','cpp']}
 	let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
 	"始终开启标志列
 	let g:ale_sign_column_always = 1
@@ -546,19 +559,17 @@ Plug 'w0rp/ale' , { 'for':['python','c','cpp']}
 	" let g:ale_set_quickfix = 1
 "
 "
-"
 " 毫秒后调用 LoadPlug，且只调用一次, 见 `:h timer_start()`
-autocmd FileType python :call timer_start(20, 'LoadPlug')
+" autocmd FileType python :call timer_start(20, 'LoadPlug')
 function! LoadPlug(timer) abort
   " 手动加载
-  call plug#load('jedi-vim')
+  " call plug#load('jedi-vim')
   " call plug#load('python-mode')
 
 endfunction
 
-
-Plug  'python-mode/python-mode'  , { 'on': [] }
-	" let g:pymode_python = 'python'
+Plug  'python-mode/python-mode'  , { 'for': [] }
+	let g:pymode_python = 'python3'
 	let g:pymode = 1
 	let g:pymode_path=[]
 	let g:pymode_options = 1
@@ -581,6 +592,7 @@ Plug  'python-mode/python-mode'  , { 'on': [] }
 	" Override view python doc key shortcut to Ctrl-Shift-d
 	let g:pymode_doc_bind = '<leader>k'
 	"Linting,代码检查的部分,我用ale，检查。
+	""这个语法检查严重影响速度
 	let g:pymode_lint = 0
 	let g:pymode_lint_ignore="E501"
 	let g:pymode_lint_checker = ['pyflakes','pylint','pep8']
