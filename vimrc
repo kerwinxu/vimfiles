@@ -11,7 +11,7 @@
 "f7		文档注释
 "f8		IDE			格式化		
 "f9		加断点	
-"f10		:Gina		Gdiff		git push	commit - a - m
+"f10	:Gina		Gdiff		git push	commit - a - m
 "f11
 "f12     跳转到定义				查找引用
 "'<leader>k': python - mode中显示函数注释的。
@@ -351,9 +351,9 @@ endf
    " let g:load_doxygen_syntax = 1
 	" let g:DoxygenToolkit_briefTag_funcName = "yes"
 func! ProgramConfig()
-	" call AutoPair()
+	call AutoPair()
 endfunc
-autocmd FileType ruby,eruby,python,xml,java,cs,lisp :call ProgramConfig()
+autocmd FileType ruby,eruby,python,xml,java,cs,lisp,vim :call ProgramConfig()
 
 " 代码自动提示
 Plug 'vim-scripts/AutoComplPop'
@@ -363,10 +363,10 @@ Plug 'vim-scripts/AutoComplPop'
 Plug 'vim-scripts/YankRing.vim'
 
 "自动匹配代码的
-Plug 'spf13/vim-autoclose' ,{'for':['python','c','cpp','lua','vim','java']}
+"Plug 'spf13/vim-autoclose' ,{'for':['python','c','cpp','lua','vim','java']}
 
 "快速注释代码
-Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua','vim','java']}
+Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua','vim','java','vim']}
 	" Add spaces after comment delimiters by default
 	let g:NERDSpaceDelims = 1
 	" Use compact syntax for prettified multi-line comments
@@ -377,8 +377,7 @@ Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua','vim','ja
 	"n\cu : 为光标以下 n 行取消注释
 	"n\cm : 为光标以下 n 行添加块注释
 	"好像emacs的注释就是alt+;，这里也用这个吧。
-	map <c-/> <leader>c<space>
-
+	map <a-;> <leader>c<space>
 
 """"""""""""""""""如下是python的配置"""""""""
 "这个是自动给python加上文件头的
@@ -508,24 +507,24 @@ autocmd FileType python :call PythonConfig()
 Plug 'davidhalter/jedi-vim' , { 'for':['python']}
 	autocmd FileType python set omnifunc=jedi#completions
 	" let g:neocomplete#enable_auto_select = 1
-	let g:jedi#popup_select_first=1
+	"let g:jedi#popup_select_first=1
 	" set completeopt=longest,menuone
-	let g:jedi#auto_vim_configuration = 1
-	let g:jedi#popup_on_dot = 1
+	" let g:jedi#auto_vim_configuration = 1
+	" let g:jedi#popup_on_dot = 1
 	if !exists('g:neocomplete#force_omni_input_patterns')
 			let g:neocomplete#force_omni_input_patterns = {}
 	endif
 	let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\)\w*'
-	" let g:jedi#goto_command = "<leader>d"
-	" let g:jedi#goto_assignments_command = "<leader>g"
-	" let g:jedi#goto_definitions_command = ""
+	let g:jedi#goto_command = "<leader>d"
+	let g:jedi#goto_assignments_command = "<leader>g"
+	" " let g:jedi#goto_definitions_command = ""
 	let g:jedi#documentation_command = "<leader>k"
-	" let g:jedi#usages_command = "<leader>n"
-	" let g:jedi#completions_command = "<C-Space>"
+	" " let g:jedi#usages_command = "<leader>n"
+	" " let g:jedi#completions_command = "<C-Space>"
 	let g:jedi#rename_command = "<F2>"
 	" "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
-Plug 'w0rp/ale' , { 'for':['c','cpp']}
+Plug 'w0rp/ale' , { 'for':['c','cpp',]}
 	let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
 	"始终开启标志列
 	let g:ale_sign_column_always = 1
@@ -798,8 +797,8 @@ set autochdir
 
 """"""""""""""""""gtags""""""""""""""""""""""
 """""""""""有个插件可以管理gtags和ctags连接的，自动更新的
-Plug 'ludovicchabant/vim-gutentags',{'for':['python','c','cpp']}
-Plug 'skywind3000/gutentags_plus' ,{'for':['python','c','cpp']} "这个插件是配合如上插件的
+Plug 'ludovicchabant/vim-gutentags'
+Plug 'skywind3000/gutentags_plus'  "这个插件是配合如上插件的
 " gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
 let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 " 所生成的数据文件的名称
