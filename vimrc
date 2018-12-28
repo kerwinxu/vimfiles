@@ -380,6 +380,7 @@ Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua','vim','ja
 	map <a-;> <leader>c<space>
 
 """"""""""""""""""如下是python的配置"""""""""
+py3 import os;import sys;sys.executable=os.path.join(sys.prefix,'python.exe')
 "这个是自动给python加上文件头的
 func! HeaderPython()
     call setline(1, "#!/usr/bin/env python")
@@ -524,7 +525,7 @@ Plug 'davidhalter/jedi-vim' , { 'for':['python']}
 	let g:jedi#rename_command = "<F2>"
 	" "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
-Plug 'w0rp/ale' , { 'for':['c','cpp',]}
+Plug 'w0rp/ale' , { 'for':['c','cpp','python']}
 	let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
 	"始终开启标志列
 	let g:ale_sign_column_always = 1
@@ -567,7 +568,7 @@ function! LoadPlug(timer) abort
 
 endfunction
 
-Plug  'python-mode/python-mode'  , { 'for': [] }
+" Plug  'python-mode/python-mode'  , { 'for': ['python'] }
 	let g:pymode_python = 'python3'
 	let g:pymode = 1
 	let g:pymode_path=[]
@@ -622,7 +623,7 @@ Plug  'python-mode/python-mode'  , { 'for': [] }
 	"高亮空格错误
 	let g:pymode_syntax_space_errors = g:pymode_syntax_all
 	"rope setting
-	let g:pymode_rope = 0
+	let g:pymode_rope = 1
 	let g:pymode_rope_lookup_project = 0 "一定要加这个，要不然遇到中文目录会乱码 的
 	let g:pymode_rope_rename_bind = '<F2>' "改名的
 	let g:pymode_rope_autoimport = 1
@@ -783,7 +784,12 @@ func! CompileAndDebugC()
         exec "!g++ % -o %.bin -g"
         exec "!gdb ./%.bin"
 	elseif &filetype == 'python'
-		exec "!python -i -m pdb \"%\""
+		"这里要判断是否是pytest文件
+		if expand('%')[0:3] == "test"
+			exec "!pytest"
+		else	   
+			exec "!python -i -m pdb \"%\""
+		endif
 	endif
 endfunc
 map <c-f5> :call CompileAndDebugC()<cr>
