@@ -113,6 +113,16 @@ else
 	set undodir=~/.vim/undodir
 endif
 
+""开启终端的真彩色。
+" if has("termguicolors")
+    " " fix bug for vim
+    " set t_8f=^[[38;2;%lu;%lu;%lum
+    " set t_8b=^[[48;2;%lu;%lu;%lum
+
+    " " enable true color
+    " set termguicolors
+" endif
+
 "编码配置If set to 1, then Latex-Suite will create certain global debug statements which can be printed by doing
 set fileencodings=utf-8,gb18030,gbk,gb2312,cp936,ucs-bom,shift-jis
 "当字符大于这个的时候，会自动换行，取消这个选项吧
