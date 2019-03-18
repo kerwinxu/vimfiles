@@ -9,12 +9,11 @@
 "f5		运行
 "f6
 "f7		文档注释
-"f8		IDE			格式化		
+"f8		IDE			格式化		:term		
 "f9		加断点	
-"f10	:Gina		Gdiff		git push	commit - a - m
+"f10	:Gina		Gdiff		
 "f11
 "f12     跳转到定义				查找引用
-"'<leader>k': python - mode中显示函数注释的。
 " <leader>cd	Functions called by this function
 " <leader>cc	Functions calling this function
 " <leader>ct	Find text string under cursor
@@ -40,30 +39,37 @@
 "各个函数
 "插件管理
 "
+"
+"
 """""""""""""""""""""""""""""如下是通用配置""""""""""""""""""""""""""""
 " \te: Skip initialization for vim - tiny or vim - small.
-if &compatible
-    set nocompatible               " Be iMproved
-endif
 source $VIMRUNTIME/mswin.vim
 behave mswin "鼠标运行模式为windows模式
 "如下的设置能保证在gvim，vim 中中文是没问题的.
 set encoding=utf-8
-set termencoding=utf-8
+set langmenu=en
+" set langmenu=zh_CN.utf-8
 language messages zh_CN.utf-8
-set guifont=Dejavu_Sans_Mono:h11:cANSI
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+set makeencoding=char
+set imcmdline
+" set termencoding=utf-8
+source $VIMRUNTIME/delmenu.vim
+source $VIMRUNTIME/menu.vim
+" set guifont=Dejavu_Sans_Mono:h11:cANSI
 if has('gui')
-	"显示配置
 	colors solarized
 	" set background=dark
 else
 	colors Zenburn
 endif
 """"""""""""设置备份及备份目录。
-set backupdir=d:\vim\bakfiles
-set undodir=d:\vim\undodir
+"必须得先设置生效，然后再设置目录"
+set undofile
+set backup
+set backupdir=D:/Vim/bakfiles
+set undodir=D:/Vim/undodir
 set cursorline "反显光标当前行颜色
-set fileencodings=utf-8,gb18030,gbk,gb2312,cp936,ucs-bom,shift-jis
 set textwidth=0 "当字符大于这个的时候，会自动换行，取消这个选项吧
 set nocompatible " 不要使用vi的键盘模式，而是vim自己的
 set syntax=on " 语法高亮
@@ -91,7 +97,7 @@ set wildmenu  wildmode=longest,list,full "用于命令行的补全，tab
 	autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 	autocmd FileType java set omnifunc=javacomplete#Complet
 	autocmd FileType python set omnifunc=jedi#completions
-set wildchar=<Tab> wildcharm=<C-Z>
+	set wildchar=<Tab> wildcharm=<C-Z>
 set nu "显示行号
 set ruler                   " 打开状态栏标尺
 set cursorline              " 突出显示当前行
@@ -102,10 +108,14 @@ set incsearch
 "set gdefault
 set magic           "使用正则时，除了$ . * ^以外的元字符都要加反斜线
 set laststatus=2
-au BufEnter *.txt setlocal ft=txt
+" au BufEnter *.txt setlocal ft=txt
 "如下是ctags配置
 set tags=./.tags;,.tags
 set autochdir
+let mapleader = ' '
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif        "打开文件的适合，跳转到上次编辑的位置                                                
+
+
 """""""""""""""""""""""""""""""""""""""各个函数"""""""""""""""""""""""""""""""""""""""
 """"""""""""""""""格式化代码""""""""""""""""
 "定义FormartSrc()
@@ -132,6 +142,7 @@ endfunc
 "普通模式和插入模式都可以运行吧
 map <c-f8> :call FormartSrc()<CR>
 imap <c-f8> <esc>:call FormartSrc()<CR>
+""
 function AutoPair()
 	:inoremap ( ()<ESC>i
 	:inoremap ) <c-r>=ClosePair(')')<CR>
@@ -142,7 +153,6 @@ function AutoPair()
 	:inoremap " ""<ESC>i
 	:inoremap ' ''<ESC>i
 endfunction
-""""""""""""""""""""""""""""""""""""
 function! ClosePair(char)
     if getline('.')[col('.') - 1] == a:char
         return "\<Right>"
@@ -150,28 +160,6 @@ function! ClosePair(char)
         return a:char
     endif
 endfunction
-""""""""""""""""""""""""""""""""""""
-function! EqualSign(char)
-    if a:char  =~ '='  && getline('.') =~ ".*[(<]"
-        return a:char
-    endif 
-    let ex1 = getline('.')[col('.') - 3]
-    let ex2 = getline('.')[col('.') - 2]
-
-    if ex1 =~ "[-=+><>\/\*!]"
-        if ex2 !~ "\s"
-            return "\<ESC>i".a:char."\<SPACE>"
-        else
-            return "\<ESC>xa".a:char."\<SPACE>"
-        endif 
-    else
-        if ex2 !~ "\s"
-            return "\<SPACE>".a:char."\<SPACE>\<ESC>a"
-        else
-            return a:char."\<SPACE>\<ESC>a"
-        endif 
-    endif
-endf
 """"""""""""""""""""""""""""""""""""
 func! ProgramConfig()
 	call AutoPair()
@@ -182,6 +170,117 @@ func! ProgramConfig()
 	let g:gutentags_define_advanced_commands = 1
 endfunc
 autocmd FileType ruby,eruby,python,xml,java,cs,lisp,vim,c :call ProgramConfig()
+
+""""""""""""""""""如下是python的配置"""""""""
+py3 import os;import sys;sys.executable=os.path.join(sys.prefix,'python.exe')
+"这个是自动给python加上文件头的
+func! HeaderPython()
+    call setline(1, "#!/usr/bin/env python")
+    call append(1, "# -*- coding: utf-8 -*-")
+	call append(2, '"""@File Name: ' . expand("%"))
+    call append(3, "@Author:  kerwin.cn@gmail.com" )
+	call append(4, "@Created Time:" . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
+	call append(5, "@Last Change: " . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
+	call append(6, "@Description :  ")
+	call append(7,'"""')
+	normal G
+	normal k
+	normal A
+endfunc
+autocmd BufNewFile *.py  :call HeaderPython()
+
+nnoremap <F5> :call CompileRunGcc()<cr>
+
+func! CompileRunGcc()
+          exec "w"
+          if &filetype == 'python'
+                  if search("@profile")
+                          exec "AsyncRun kernprof -l -v %"
+                          exec "copen"
+                          exec "wincmd p"
+                  elseif search("set_trace()")
+                          exec "!python %"
+                  else
+					  " call RunPython()
+						  exec "AsyncRun -raw python  %"
+						  exec "copen"
+						  exec "wincmd p"
+                  endif
+          endif
+endfunc
+
+"按F5运行python"
+" map <F5>  :call RunPython()<CR>
+function RunPython()
+    let mp = &makeprg
+    let ef = &errorformat
+    let exeFile = expand("%:t")
+    setlocal makeprg=python\ -u 
+    set efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
+    silent make %
+    copen
+    let &makeprg = mp
+    let &errorformat = ef
+endfunction
+
+func! PythonConfig()
+	"set foldmethod=indent "代码折叠只以缩进为依据
+	setlocal foldlevelstart=99	"默认不折叠
+	setlocal et | setlocal sta | setlocal sw=4
+	" Python Unittest 的一些设置
+	" " 可以让我们在编写 Python 代码及 unittest 测试时不需要离开 vim
+	" " 键入 :make 或者点击 gvim 工具条上的 mak/pythe 按钮就自动执行测试用例
+	compiler pyunit
+	setlocal makeprg=python\ %
+	"添加python的tags
+	set tags+=D:/Anaconda3/tags
+	let g:python_host_skip_check=1
+	let g:python3_host_prog = 'd:/Anaconda3/python.exe'
+	" exec ":AcpDisable"
+	" python键的配置
+	" 只有python的才可以加这个断点吧
+	map <f9> :call AddPythonBreak()<CR> 
+	"python的注释的，以后看看做成所有语言的，但好像有个注释插件。
+	map <f7> :call CommentPython()<CR>
+	imap <f7> <ESC>:call CommentPython()<CR>
+endfunc
+autocmd FileType python :call PythonConfig()
+
+"这个是给python添加调试的
+func! AddPythonBreak()
+" if has('python3')
+python3 <<EOF
+_str_break = "import ipdb;ipdb.set_trace()"
+# 因为存在缩进，所以这里必须得先取得函数的缩进是多少。然后加上缩进迭代添加注释
+cb = vim.current.buffer     # 获取当前缓冲区
+# 获得当前位置
+(x,y)=vim.current.window.cursor
+# 获得当前行
+line=cb[x-1]
+# 首先判断前面有几个缩进啦。
+# 然后遍历加上注释
+num_space=0
+len_line=len(line)
+while(num_space<len_line):
+	if(line[num_space].isspace()):
+		num_space=num_space+1
+	else:
+		s=''.center(num_space,' ')
+		cb.append(s+_str_break,x-1)
+		break
+EOF
+" endif
+exec "w"
+endfunc
+
+func! HelpMyKey()
+"我打算用这个函数来做一个帮助文档，方便我查看我的快捷键的。
+python2 <<EOF
+
+
+EOF
+
+endfunc
 
 """"""""""""""""""""""""""""""""""""
 "这个是给python函数的注释，作为__doc__用
@@ -236,77 +335,6 @@ EOF
 " endif
 endfunc
 """"""""""""""""""""""""""""""""""""
-func! PythonConfig()
-	"set foldmethod=indent "代码折叠只以缩进为依据
-	setlocal foldlevelstart=99	"默认不折叠
-	" Python 文件的一般设置，比如不要 tab 等
-	setlocal et | setlocal sta | setlocal sw=4
-	" Python Unittest 的一些设置
-	" " 可以让我们在编写 Python 代码及 unittest 测试时不需要离开 vim
-	" " 键入 :make 或者点击 gvim 工具条上的 mak/pythe 按钮就自动执行测试用例
-	compiler pyunit
-	setlocal makeprg=python\ %
-
-	"autocmd FileWritePre *.py :call LastModified()
-	"添加python的tags
-	set tags+=D:/Anaconda3/tags
-	let g:python_host_skip_check=1
-	let g:python3_host_prog = 'd:/Anaconda3/python.exe'
-	" exec ":AcpDisable"
-	" python键的配置
-	" 只有python的才可以加这个断点吧
-	map <f9> :call AddPythonBreak()<CR> 
-	"python的注释的，以后看看做成所有语言的，但好像有个注释插件。
-	map <f7> :call CommentPython()<CR>
-	imap <f7> <ESC>:call CommentPython()<CR>
-endfunc
-autocmd FileType python :call PythonConfig()
-
-"这个是给python添加调试的
-func! AddPythonBreak()
-" if has('python3')
-python3 <<EOF
-_str_break = "import ipdb;ipdb.set_trace()"
-# 因为存在缩进，所以这里必须得先取得函数的缩进是多少。然后加上缩进迭代添加注释
-cb = vim.current.buffer     # 获取当前缓冲区
-# 获得当前位置
-(x,y)=vim.current.window.cursor
-# 获得当前行
-line=cb[x-1]
-# 首先判断前面有几个缩进啦。
-# 然后遍历加上注释
-num_space=0
-len_line=len(line)
-while(num_space<len_line):
-	if(line[num_space].isspace()):
-		num_space=num_space+1
-	else:
-		s=''.center(num_space,' ')
-		cb.append(s+_str_break,x-1)
-		break
-EOF
-" endif
-exec "w"
-endfunc
-
-""""""""""""""""""如下是python的配置"""""""""
-py3 import os;import sys;sys.executable=os.path.join(sys.prefix,'python.exe')
-"这个是自动给python加上文件头的
-func! HeaderPython()
-    call setline(1, "#!/usr/bin/env python")
-    call append(1, "# -*- coding: utf-8 -*-")
-	call append(2, '"""@File Name: ' . expand("%"))
-    call append(3, "@Author:  kerwin.cn@gmail.com" )
-	call append(4, "@Created Time:" . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
-	call append(5, "@Last Change: " . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
-	call append(6, "@Description :  ")
-	call append(7,'"""')
-	normal G
-	normal k
-	normal A
-endfunc
-autocmd BufNewFile *.py  :call HeaderPython()
-
 "Last change用到的函数，返回时间，能够自动调整位置
 function! LastChange(...)
 	if &mod
@@ -354,12 +382,14 @@ au BufWritePre *.html,*htm call LastChange('<!--', '-->')
 
 """"""""""""""""""""""""""""""""""""""插件管理""""""""""""""""""""""""""""""""""""""
 call plug#begin('E:/home/kerwin/vimfiles/pugged')
-	" call plug#begin('~/.vim/plugged')
 filetype off
+
+"编码"
+" Plug 'mbbill/fencview'
 
 
 """"Gnudo是保存更改记录的""""
-Plug 'sjl/gundo.vim' ,{'on':'GundoToggle'}
+Plug 'sjl/gundo.vim' 
 	let  g:gundo_prefer_python3=1 
 	map <leader>h :GundoToggle<CR>
 
@@ -398,6 +428,9 @@ Plug 'vim-scripts/The-NERD-tree' ,{'on':'NERDTreeToggle'} "触发时才加载
 "按f8就是打开一个IDE
 	map <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
 	imap <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
+"shift+f8，打开终端"
+map <s-f8> <esc>:term<cr>
+imap <s-f8> <esc>:term<cr>
 
 "括号高亮，不同颜色的。
 Plug 'kien/rainbow_parentheses.vim'
@@ -467,16 +500,16 @@ Plug 'w0rp/ale' , { 'for':['c','cpp','python']}
 	" let g:ale_set_quickfix = 1
 
 Plug 'vim-latex/vim-latex',{'for':['tex']} 
-" IMPORTANT: win32 users will need to have 'shellslash' set so that latex
-" " can be called correctly.
-set shellslash
+	" IMPORTANT: win32 users will need to have 'shellslash' set so that latex
+	" " can be called correctly.
+	set shellslash
 
 
 """""""""""""""""如下是lisp的插件""""""""""""
 Plug 'kovisoft/slimv' ,{'for':['lisp']}
-let g:slimv_impl = 'sbcl'
-let g:slimv_swank_cmd = '!start  "D:/Program Files/Steel Bank Common Lisp/1.4.2/sbcl.exe"  --load "e:/home/kerwin/vimfiles/pugged/slimv/slime/start-swank.lisp" '
-let g:paredit_electric_return=1
+	let g:slimv_impl = 'sbcl'
+	let g:slimv_swank_cmd = '!start  "D:/Program Files/Steel Bank Common Lisp/1.4.2/sbcl.exe"  --load "e:/home/kerwin/vimfiles/pugged/slimv/slime/start-swank.lisp" '
+	let g:paredit_electric_return=1
 
 Plug 'ludovicchabant/vim-gutentags' ,{'on':'NERDTreeToggle'}
 Plug 'skywind3000/gutentags_plus' ,{'on':'NERDTreeToggle'} "这个插件是配合如上插件的
@@ -505,25 +538,28 @@ Plug 'vim-scripts/AutoComplPop',{'for':['python','c','cpp','lua','vim','java','v
 "就比如yy就是复制一行，dd是删除一行，如下这个插件就是做这个的。
 Plug 'vim-scripts/YankRing.vim'
 
+"这个是异步执行的"
+Plug 'skywind3000/asyncrun.vim' ,{'for':['python','c','cpp']}
+	let g:asyncrun_encs = 'gbk' "支持中文很重要。我的终端是中文啊。
+
+" Plug 'Valloric/YouCompleteMe' ,{'for':['python','c','cpp']}
+	" map <Leader>f :YcmCompleter GoToReferences<CR><cr>
+	" map <Leader>k :YcmCompleter GetDoc<CR><cr>
+	" map <Leader>d :YcmCompleter GoTo<CR><cr>
 Plug 'davidhalter/jedi-vim' , { 'for':['python']}
-	" let g:neocomplete#enable_auto_select = 1
-	"let g:jedi#popup_select_first=1
-	" set completeopt=longest,menuone
-	" let g:jedi#auto_vim_configuration = 1
-	" let g:jedi#popup_on_dot = 1
 	if !exists('g:neocomplete#force_omni_input_patterns')
 			let g:neocomplete#force_omni_input_patterns = {}
 	endif
 	let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\)\w*'
-	let g:jedi#goto_command = "<leader>d"
-	let g:jedi#goto_assignments_command = "<leader>g"
+	" let g:jedi#goto_command = "<leader>d"
+	" let g:jedi#goto_assignments_command = "<leader>g"
 	" " let g:jedi#goto_definitions_command = ""
-	let g:jedi#documentation_command = "<leader>k"
+	" let g:jedi#documentation_command = "<leader>k"
 	" " let g:jedi#usages_command = "<leader>n"
 	" " let g:jedi#completions_command = "<C-Space>"
 	let g:jedi#rename_command = "<F2>"
 	" "
-Plug 'lambdalisue/gina.vim' ,{'on':['Gina','Gdiff']}
+Plug 'lambdalisue/gina.vim'
 	"这个git，我主要需要的是git status , git add  git commit  , git log , git diff
 	", git push
 	"我设置f9键为显示git，其他的看看按个最常用吧。
@@ -531,8 +567,6 @@ Plug 'lambdalisue/gina.vim' ,{'on':['Gina','Gdiff']}
 	"而git diff 用 Gdiff好些
 	map <f10> <esc>:Gina 
 	map <c-f10> <esc>:Gdiff<cr>
-	map <a-f10> <esc>:Gina commit -a -m "
-	map <s-f10> <esc>:Gina push <cr>
 
 """"""""""""""""""""""方便浏览的
 Plug 'skywind3000/vim-preview'
@@ -551,6 +585,13 @@ Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua','vim','ja
 	"好像emacs的注释就是alt+;，这里也用这个吧。
 	map <a-;> <leader>c<space>
 
+"""延迟加载"""
+augroup load_slow
+autocmd!
+" autocmd  FileType python call plug#load('jedi-vim') 
+" autocmd  FileType python call plug#load('') 
+augroup END
+"
 "到这里Vundle就完成了
 call plug#end()
 filetype plugin indent on     " required! 
