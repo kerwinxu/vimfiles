@@ -32,10 +32,10 @@
 	nmap <f12> :Gtags<cr><cr>"跳转到光标所在函数的定义  
 	nmap <s-f12> :Gtags -r<cr><cr>"搜索光标所在函数的引用  
 ### surround.vim  
+
 这个只是为了更改成对的括号之类的，比如将成对的单引号转成双引号啦。  
 我这里直接粘贴官方的吧  
 Normal mode  
------------  
 ds  - delete a surrounding  
 cs  - change a surrounding  
 ys  - add a surrounding  
@@ -44,11 +44,9 @@ yss - add a surrounding to the whole line
 ySs - add a surrounding to the whole line, place it on a new line + indent it  
 ySS - same as ySs  
 Visual mode  
------------  
 s   - in visual mode, add a surrounding  
 S   - in visual mode, add a surrounding but place text on new line + indent it  
 Insert mode  
------------  
 <CTRL-s> - in insert mode, add a surrounding  
 <CTRL-s><CTRL-s> - in insert mode, add a new line + surrounding + indent  
 <CTRL-g>s - same as <CTRL-s>  
@@ -75,6 +73,6 @@ map <f9> :call AddPythonBreak()<CR>
 这个插件可以记录更改的内容，一个时光机。  
 需要记住的快捷键就是  
 map <leader>h :GundoToggle<CR>  
-#终端  
+# 终端  
 vim8支持打开一个终端，记录一下命令  
 map <s-f8> <esc>:term<cr>  
