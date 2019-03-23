@@ -59,6 +59,7 @@ source $VIMRUNTIME/menu.vim
 " set guifont=Dejavu_Sans_Mono:h11:cANSI
 if has('gui')
 	colors solarized
+	let g:solarized_italic=(abs(g:solarized_italic-1)) | colorscheme solarized
 	" set background=dark
 else
 	colors Zenburn
@@ -177,12 +178,12 @@ py3 import os;import sys;sys.executable=os.path.join(sys.prefix,'python.exe')
 func! HeaderPython()
     call setline(1, "#!/usr/bin/env python")
     call append(1, "# -*- coding: utf-8 -*-")
-	call append(2, '"""@File Name: ' . expand("%"))
-    call append(3, "@Author:  kerwin.cn@gmail.com" )
-	call append(4, "@Created Time:" . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
-	call append(5, "@Last Change: " . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
-	call append(6, "@Description :  ")
-	call append(7,'"""')
+	call append(2, '# File Name: ' . expand("%"))
+    call append(3, "# Author:  kerwin.cn@gmail.com" )
+	call append(4, "# Created Time:" . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
+	call append(5, "# Last Change: " . strftime('%Y-%m-%d %H:%M:%S ', localtime()))
+	call append(6, "# Description :  ")
+	" call append(7,'')
 	normal G
 	normal k
 	normal A
@@ -192,21 +193,23 @@ autocmd BufNewFile *.py  :call HeaderPython()
 nnoremap <F5> :call CompileRunGcc()<cr>
 
 func! CompileRunGcc()
-          exec "w"
-          if &filetype == 'python'
-                  if search("@profile")
-                          exec "AsyncRun kernprof -l -v %"
-                          exec "copen"
-                          exec "wincmd p"
-                  elseif search("set_trace()")
-                          exec "!python %"
-                  else
-					  " call RunPython()
-						  exec "AsyncRun -raw python  %"
-						  exec "copen"
-						  exec "wincmd p"
-                  endif
-          endif
+	exec "w"
+	if &filetype == 'python'
+		if search("@profile")
+			exec "AsyncRun kernprof -l -v %"
+			exec "copen"
+			exec "wincmd p"
+		elseif search("set_trace()")
+			exec "!python %"
+		else
+			" call RunPython()
+			exec "AsyncRun -raw python  %"
+			exec "copen"
+			exec "wincmd p"
+		endif
+	elseif  &filetype == 'markdown'
+		exec ":Instantmd"
+	endif
 endfunc
 
 "按F5运行python"
@@ -394,7 +397,7 @@ Plug 'sjl/gundo.vim'
 	map <leader>h :GundoToggle<CR>
 
 "快速搜索文件的
-Plug 'kien/ctrlp.vim' ,{'on':['Ctrlp']}
+Plug 'kien/ctrlp.vim' 
 	let g:ctrlp_map = '<f3>'
 	let g:ctrlp_cmd = 'CtrlP'
 	let g:ctrlp_working_path_mode = 'ra'
@@ -542,10 +545,16 @@ Plug 'vim-scripts/YankRing.vim'
 Plug 'skywind3000/asyncrun.vim' ,{'for':['python','c','cpp']}
 	let g:asyncrun_encs = 'gbk' "支持中文很重要。我的终端是中文啊。
 
-" Plug 'Valloric/YouCompleteMe' ,{'for':['python','c','cpp']}
-	" map <Leader>f :YcmCompleter GoToReferences<CR><cr>
-	" map <Leader>k :YcmCompleter GetDoc<CR><cr>
-	" map <Leader>d :YcmCompleter GoTo<CR><cr>
+Plug 'Valloric/YouCompleteMe' ,{'for':['c','cpp']}
+	let g:ycm_key_invoke_completion = '<c-z>'
+	map <Leader>f :YcmCompleter GoToReferences<CR><cr>
+	map <Leader>k :YcmCompleter GetDoc<CR><cr>
+	map <Leader>d :YcmCompleter GoTo<CR><cr>
+	let g:ycm_semantic_triggers =  {
+			\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+			\ 'cs,lua,javascript': ['re!\w{2}'],
+			\ }
+
 Plug 'davidhalter/jedi-vim' , { 'for':['python']}
 	if !exists('g:neocomplete#force_omni_input_patterns')
 			let g:neocomplete#force_omni_input_patterns = {}
@@ -591,7 +600,32 @@ autocmd!
 " autocmd  FileType python call plug#load('jedi-vim') 
 " autocmd  FileType python call plug#load('') 
 augroup END
+
+
+"markdown格式"
+Plug 'godlygeek/tabular', {'for':['markdown']}
+Plug 'plasticboy/vim-markdown',{'for':['markdown']}
 "
 "到这里Vundle就完成了
 call plug#end()
 filetype plugin indent on     " required! 
+
+"如下我要做类似spacemacs的东西"
+"分3部分吧，
+"第一部分是打开一个小窗体，
+"第二部分是关闭这个小窗体
+"第三部分是这个窗体中设置快捷键。
+"要不我先做一个简单版本的吧。
+"只是打开一个小窗体，提示快捷键，然后启动一个定时器，几秒中内关闭这个小窗体
+"
+"
+map <s-f1> :call OpenHelper()<cr>
+function CloseHelper(timer)
+	exec "bdelete! helper"
+endfunction
+function OpenHelper()
+	exec "keepa bo 10new helper"
+	let listhelper=['		F1		F2		F3		F4		F5		F6		F7		F8		F9		F10		F11		F12',	'单独			重命名	ctrlp			运行			注释	IDE		断点	:Gina			跳转到定义',	'Ctrl															格式化			:Gdiff',	'shift	帮助			Gtags -x																Gtags -r',	'Alt					Ack				']
+	:call appendbufline('helper',0,listhelper)	
+	let timer=timer_start(5000,'CloseHelper')
+endfunction
