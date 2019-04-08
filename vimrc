@@ -530,9 +530,13 @@ Plug 'skywind3000/gutentags_plus' ,{'on':'NERDTreeToggle'} "这个插件是配�
 	endif
 	" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
 	" let g:gutentags_cache_dir = expand('~/.cache/tags')
-	let g:gutentags_auto_add_gtags_cscope = 0
+	let g:gutentags_auto_add_gtags_cscope = 1
 	" change focus to quickfix window after search (optional).
 	let g:gutentags_plus_switch = 1
+	" 配置 ctags 的参数
+	let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 	nmap <S-f3> :Gtags -x 
 " 代码自动提示
 Plug 'vim-scripts/AutoComplPop',{'for':['python','c','cpp','lua','vim','java','vim']}
@@ -581,7 +585,7 @@ Plug 'lambdalisue/gina.vim'
 Plug 'skywind3000/vim-preview'
 
 "快速注释代码
-Plug 'vim-scripts/The-NERD-Commenter',{'for':['python','c','cpp','lua','vim','java','vim']}
+Plug 'scrooloose/nerdcommenter'
 	" Add spaces after comment delimiters by default
 	let g:NERDSpaceDelims = 1
 	" Use compact syntax for prettified multi-line comments
