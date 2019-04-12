@@ -54,13 +54,15 @@ set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 set makeencoding=char
 set imcmdline
 " set termencoding=utf-8
-source $VIMRUNTIME/delmenu.vim
-source $VIMRUNTIME/menu.vim
+" source $VIMRUNTIME/delmenu.vim
+" source $VIMRUNTIME/menu.vim
 " set guifont=Dejavu_Sans_Mono:h11:cANSI
 if has('gui')
+	set background=light
 	colors solarized
-	let g:solarized_italic=(abs(g:solarized_italic-1)) | colorscheme solarized
-	" set background=dark
+	" let g:solarized_italic=(abs(g:solarized_italic-1)) | colorscheme solarized
+	" set guioptions-=m " 不显示菜单
+	" set guioptions-=T " 不显示工具栏
 else
 	colors Zenburn
 endif
@@ -113,7 +115,7 @@ set laststatus=2
 "如下是ctags配置
 set tags=./.tags;,.tags
 set autochdir
-let mapleader = ' '
+let mapleader = ','
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif        "打开文件的适合，跳转到上次编辑的位置                                                
 
 
@@ -585,7 +587,7 @@ Plug 'lambdalisue/gina.vim'
 Plug 'skywind3000/vim-preview'
 
 "快速注释代码
-Plug 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdcommenter' ,{'for':['python','c','cpp','lua','vim','java','vim']}
 	" Add spaces after comment delimiters by default
 	let g:NERDSpaceDelims = 1
 	" Use compact syntax for prettified multi-line comments
@@ -596,7 +598,7 @@ Plug 'scrooloose/nerdcommenter'
 	"n\cu : 为光标以下 n 行取消注释
 	"n\cm : 为光标以下 n 行添加块注释
 	"好像emacs的注释就是alt+;，这里也用这个吧。
-	map <a-;> <leader>c<space>
+	map <A-;> <leader>c<space>
 
 """延迟加载"""
 augroup load_slow
