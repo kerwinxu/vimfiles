@@ -84,6 +84,11 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 map <s-f8> <esc>:term<cr>
 imap <s-f8> <esc>:term<cr>
 
+let mapleader=" "
+
+"我当如下的这些是工程目录root的判定"
+let project_name=['.root', '.svn', '.git', '.hg', '.project']
+
 """"""""""""""""""""""""""""""""""""""""""如下是各个插件的""""""""""""""""""""""""""""""""""""""""""
 call plug#begin('E:/home/kerwin/vimfiles/pugged')
 filetype off
@@ -97,7 +102,7 @@ Plug 'sjl/gundo.vim'
 	map <c-f3> :LeaderfTag<cr>
 	imap <c-f3> :LeaderfTag<cr>
 	let g:Lf_WorkingDirectoryMode='Ac'
-	let g:Lf_RootMarkers= ['.git', '.hg', '.svn']
+	let g:Lf_RootMarkers= project_name
 	
 	
 
@@ -203,7 +208,7 @@ Plug 'w0rp/ale' , { 'for':['python']}
 Plug 'ludovicchabant/vim-gutentags' ,{'on':'NERDTreeToggle'}
 Plug 'skywind3000/gutentags_plus' ,{'on':'NERDTreeToggle'} "这个插件是配合如上插件的
 	" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
-	let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+	let g:gutentags_project_root = project_name
 	" 所生成的数据文件的名称
 	let g:gutentags_ctags_tagfile = '.tags'
 	" 同时开启 ctags 和 gtags 支持：
