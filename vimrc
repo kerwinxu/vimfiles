@@ -94,6 +94,11 @@ Plug 'sjl/gundo.vim'
 
  Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' }
 	let g:Lf_ShortcutF = '<f3>'
+	map <c-f3> :LeaderfTag<cr>
+	imap <c-f3> :LeaderfTag<cr>
+	let g:Lf_WorkingDirectoryMode='Ac'
+	let g:Lf_RootMarkers= ['.git', '.hg', '.svn']
+	
 	
 
 " Plug 'kien/ctrlp.vim'
