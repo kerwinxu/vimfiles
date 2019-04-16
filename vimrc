@@ -23,7 +23,7 @@ set imcmdline
 " source $VIMRUNTIME/menu.vim
 " set guifont=Dejavu_Sans_Mono:h11:cANSI
 if has('gui')
-	set background=light
+	" set background=light
 	colors solarized
 	" let g:solarized_italic=(abs(g:solarized_italic-1)) | colorscheme solarized
 else
@@ -91,29 +91,34 @@ filetype off
 Plug 'sjl/gundo.vim' 
 	let  g:gundo_prefer_python3=1 
 	map <leader>h :GundoToggle<CR>
-Plug 'kien/ctrlp.vim' 
-	"快速搜索文件的，当然也是一直加载的啦。
-	let g:ctrlp_map = '<f3>'
-	let g:ctrlp_cmd = 'CtrlP'
-	let g:ctrlp_working_path_mode = 'ra'
-	let g:ctrlp_user_command = 'ag %s -l --nocolor -g "" '  " Windows
+
+ Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' }
+	let g:Lf_ShortcutF = '<f3>'
+	
+
+" Plug 'kien/ctrlp.vim'
+"     "快速搜索文件的，当然也是一直加载的啦。
+"     let g:ctrlp_map = '<f3>'
+"     let g:ctrlp_cmd = 'CtrlP'
+"     let g:ctrlp_working_path_mode = 'ra'
+"     let g:ctrlp_user_command = 'ag %s -l --nocolor -g "" '  " Windows
 	" let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
-	"快速搜索文件中的内容的
-	if executable('ag')
-		let g:ackprg = 'ag --vimgrep'
-		map <a-F3> :Ack 
-		imap <a-F3> :Ack 
-		Plug 'mileszs/ack.vim'
-	else 
-		"如果没有ag，就用vim自带的吧
-		map <a-F3> :vimgrep
-		imap <a-F3> :vimgrep
-		" vimgrep /pattern/ %           在当前打开文件中查找
-		" vimgrep /pattern/ *             在当前目录下查找所有
-		" vimgrep /pattern/ **            在当前目录及子目录下查找所有
-		" vimgrep /pattern/ *.c          查找当前目录下所有.c文件
-		" vimgrep /pattern/ **/*         只查找子目录
-	endif
+"快速搜索文件中的内容的
+if executable('ag')
+	let g:ackprg = 'ag --vimgrep'
+	map <a-F3> :Ack 
+	imap <a-F3> :Ack 
+	Plug 'mileszs/ack.vim'
+else 
+	"如果没有ag，就用vim自带的吧
+	map <a-F3> :vimgrep
+	imap <a-F3> :vimgrep
+	" vimgrep /pattern/ %           在当前打开文件中查找
+	" vimgrep /pattern/ *             在当前目录下查找所有
+	" vimgrep /pattern/ **            在当前目录及子目录下查找所有
+	" vimgrep /pattern/ *.c          查找当前目录下所有.c文件
+	" vimgrep /pattern/ **/*         只查找子目录
+endif
 "快速配括号等
 "这个跟cscope的快捷键冲突
 Plug 'vim-scripts/surround.vim',{'for':['python','c','cpp','lua','vim','java','vim']}
@@ -214,6 +219,14 @@ Plug 'skywind3000/gutentags_plus' ,{'on':'NERDTreeToggle'} "这个插件是配�
 	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
+Plug 'lambdalisue/gina.vim'
+	""这个git，我主要需要的是git status , git add  git commit  , git log , git diff
+	", git push
+	"我设置f9键为显示git，其他的看看按个最常用吧。
+	"其中git log 用 Gina log 这个显示好些
+	"而git diff 用 Gdiff好些
+	map <f10> <esc>:Gina 
+	map <c-f10> <esc>:Gdiff<cr>
 "这个是异步执行的"
 Plug 'skywind3000/asyncrun.vim' ,{'for':['python']}
 	let g:asyncrun_encs = 'gbk' "支持中文很重要。我的终端是中文啊。
