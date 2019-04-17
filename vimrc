@@ -62,7 +62,6 @@ set wildmenu  wildmode=longest,list,full "用于命令行的补全，tab
 	autocmd FileType css set omnifunc=csscomplete#CompleteCSS
 	autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
 	autocmd FileType java set omnifunc=javacomplete#Complet
-	autocmd FileType python set omnifunc=jedi#completions
 	set wildchar=<Tab> wildcharm=<C-Z>
 set nu "显示行号
 set ruler                   " 打开状态栏标尺
@@ -88,6 +87,7 @@ let mapleader=" "
 
 "我当如下的这些是工程目录root的判定"
 let project_name=['.root', '.svn', '.git', '.hg', '.project']
+let project_file_type=['python','c','cpp','java','lua']
 
 """"""""""""""""""""""""""""""""""""""""""如下是各个插件的""""""""""""""""""""""""""""""""""""""""""
 call plug#begin('E:/home/kerwin/vimfiles/pugged')
@@ -131,7 +131,7 @@ else
 endif
 "快速配括号等
 "这个跟cscope的快捷键冲突
-Plug 'vim-scripts/surround.vim',{'for':['python','c','cpp','lua','vim','java','vim']}
+Plug 'vim-scripts/surround.vim',{'for':project_file_type}
 
 "tagbar是一个taglist的替代品，比taglist更适合c++使用，函数能够按类区分，支持按类折叠显示等，
 Plug 'majutsushi/Tagbar' ,{'on':'TagbarToggle'} "触发时才加载
@@ -166,7 +166,7 @@ Plug 'kien/rainbow_parentheses.vim'
 	au Syntax * RainbowParenthesesLoadBraces	
 
 " 代码自动提示，按需加载吧。
-Plug 'vim-scripts/AutoComplPop',{'for':['python','c','cpp','lua','vim','java','vim']}
+Plug 'vim-scripts/AutoComplPop',{'for':project_file_type}
 	let g:acp_enableAtStartup = 1
 	let g:acp_behaviorPythonOmniLength = 2
 "就比如yy就是复制一行，dd是删除一行，如下这个插件就是做这个的,肯定是一直加载啦。。
@@ -205,8 +205,10 @@ Plug 'w0rp/ale' , { 'for':['python']}
 	" Write this in your vimrc file
 	" let g:ale_set_loclist = 0
 	" let g:ale_set_quickfix = 1
-Plug 'ludovicchabant/vim-gutentags' ,{'on':'NERDTreeToggle'}
-Plug 'skywind3000/gutentags_plus' ,{'on':'NERDTreeToggle'} "这个插件是配合如上插件的
+Plug 'ludovicchabant/vim-gutentags'  ,{'for':project_file_type}
+Plug 'skywind3000/gutentags_plus'  ,{'for':project_file_type}
+	let $GTAGSLABEL = 'native-pygments'
+    let $GTAGSCONF ='D:/gtags/share/gtags/gtags.conf' 
 	" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
 	let g:gutentags_project_root = project_name
 	" 所生成的数据文件的名称
@@ -229,7 +231,7 @@ Plug 'skywind3000/gutentags_plus' ,{'on':'NERDTreeToggle'} "这个插件是配�
 	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
-Plug 'lambdalisue/gina.vim'
+Plug 'lambdalisue/gina.vim'  ,{'for':project_file_type}
 	""这个git，我主要需要的是git status , git add  git commit  , git log , git diff
 	", git push
 	"我设置f9键为显示git，其他的看看按个最常用吧。
@@ -241,22 +243,15 @@ Plug 'lambdalisue/gina.vim'
 Plug 'skywind3000/asyncrun.vim' ,{'for':['python']}
 	let g:asyncrun_encs = 'gbk' "支持中文很重要。我的终端是中文啊。
 
-
 Plug 'davidhalter/jedi-vim' , { 'for':['python']}
-	if !exists('g:neocomplete#force_omni_input_patterns')
-			let g:neocomplete#force_omni_input_patterns = {}
-	endif
-	let g:neocomplete#force_omni_input_patterns.python = '\%([^. \t]\.\|^\s*@\)\w*'
-	" let g:jedi#goto_command = "<leader>d"
-	" let g:jedi#goto_assignments_command = "<leader>g"
-	" " let g:jedi#goto_definitions_command = ""
-	" let g:jedi#documentation_command = "<leader>k"
-	" " let g:jedi#usages_command = "<leader>n"
-	" " let g:jedi#completions_command = "<C-Space>"
+	let g:jedi#auto_vim_configuration = 1
+	let g:jedi#smart_auto_mappings = 1 "加上这个，就会增加比如，from PIL 后自动输入import ，然后弹出自动补全。
+	" let g:neocomplete#force_omni_input_patterns.python.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+	let g:jedi#completions_command = "<a-Space>"
 	let g:jedi#rename_command = "<F2>"
 
 "快速注释代码
-Plug 'scrooloose/nerdcommenter' ,{'for':['python','vim','c','cpp','lua','java']}
+Plug 'scrooloose/nerdcommenter' ,{'for':project_file_type}
 	" Add spaces after comment delimiters by default
 	let g:NERDSpaceDelims = 1
 	" Use compact syntax for prettified multi-line comments
@@ -380,12 +375,12 @@ func! CompileRunGcc()
 			exec "!python %"
 		else
 			" call RunPython()
-			exec "AsyncRun -raw python  %"
+			exec "AsyncRun -raw python %"
 			exec "copen"
 			exec "wincmd p"
 		endif
 	elseif  &filetype == 'markdown'
-		exec ":Instantmd"
+		" exec ":Instantmd"
 	endif
 endfunc
 
