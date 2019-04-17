@@ -77,7 +77,6 @@ set laststatus=2
 "如下是ctags配置
 set tags=./.tags;,.tags
 set autochdir
-let mapleader = ','
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif        "打开文件的适合，跳转到上次编辑的位置          
 "shift+f8，打开终端"
 map <s-f8> <esc>:term<cr>
@@ -87,7 +86,8 @@ let mapleader=" "
 
 "我当如下的这些是工程目录root的判定"
 let project_name=['.root', '.svn', '.git', '.hg', '.project']
-let project_file_type=['python','c','cpp','java','lua']
+
+let project_file_type=["python","c","cpp","java","lua","vim"]
 
 """"""""""""""""""""""""""""""""""""""""""如下是各个插件的""""""""""""""""""""""""""""""""""""""""""
 call plug#begin('E:/home/kerwin/vimfiles/pugged')
@@ -205,31 +205,24 @@ Plug 'w0rp/ale' , { 'for':['python']}
 	" Write this in your vimrc file
 	" let g:ale_set_loclist = 0
 	" let g:ale_set_quickfix = 1
-Plug 'ludovicchabant/vim-gutentags'  ,{'for':project_file_type}
-Plug 'skywind3000/gutentags_plus'  ,{'for':project_file_type}
-	let $GTAGSLABEL = 'native-pygments'
-    let $GTAGSCONF ='D:/gtags/share/gtags/gtags.conf' 
+Plug 'ludovicchabant/vim-gutentags' 
+Plug 'skywind3000/gutentags_plus'  
+	let g:gutentags_plus_switch = 1
 	" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
 	let g:gutentags_project_root = project_name
 	" 所生成的数据文件的名称
 	let g:gutentags_ctags_tagfile = '.tags'
 	" 同时开启 ctags 和 gtags 支持：
-	let g:gutentags_modules = []
-	if executable('ctags')
-		let g:gutentags_modules += ['ctags']
-	endif
-	if executable('gtags-cscope') && executable('gtags')
-		let g:gutentags_modules += ['gtags_cscope']
-	endif
+	" enable gtags module
+	let g:gutentags_modules = ['ctags', 'gtags_cscope']
 	" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
 	" let g:gutentags_cache_dir = expand('~/.cache/tags')
 	let g:gutentags_auto_add_gtags_cscope = 1
 	" change focus to quickfix window after search (optional).
-	let g:gutentags_plus_switch = 1
 	" 配置 ctags 的参数
-	let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+	" let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+	" let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+	" let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 
 Plug 'lambdalisue/gina.vim'  ,{'for':project_file_type}
 	""这个git，我主要需要的是git status , git add  git commit  , git log , git diff
@@ -248,6 +241,7 @@ Plug 'davidhalter/jedi-vim' , { 'for':['python']}
 	let g:jedi#smart_auto_mappings = 1 "加上这个，就会增加比如，from PIL 后自动输入import ，然后弹出自动补全。
 	" let g:neocomplete#force_omni_input_patterns.python.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
 	let g:jedi#completions_command = "<a-Space>"
+	let g:jedi#documentation_command = "<leader>k"
 	let g:jedi#rename_command = "<F2>"
 
 "快速注释代码
@@ -269,10 +263,10 @@ func! ProgramConfig()
 	call AutoPair()
 	source D:/gtags/share/gtags/gtags.vim
 	source D:/gtags/share/gtags/gtags-cscope.vim
-	nmap <f12> :Gtags<cr><cr>"跳转到光标所在函数的定义
-	nmap <s-f12> :Gtags -r<cr><cr>"搜索光标所在函数的引用
-	nmap <S-f3> :Gtags -x 
-	let g:gutentags_define_advanced_commands = 1
+	nmap <f12> :GscopeFind g <C-R><C-W><cr>"跳转到光标所在函数的定义
+	nmap <s-f12> :GscopeFind c <C-R><C-W><cr>搜索光标所在函数的引用
+	nmap <S-f3> :GscopeFind 
+	"let g:gutentags_define_advanced_commads = 1
 	"格式化代码。
 	map <c-f8> :call FormartSrc()<CR>
 	imap <c-f8> <esc>:call FormartSrc()<CR>
