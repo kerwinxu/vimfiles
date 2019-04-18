@@ -84,10 +84,6 @@ imap <s-f8> <esc>:term<cr>
 
 let mapleader=" "
 
-"我当如下的这些是工程目录root的判定"
-let project_name=['.root', '.svn', '.git', '.hg', '.project']
-
-let project_file_type=["python","c","cpp","java","lua","vim"]
 
 """"""""""""""""""""""""""""""""""""""""""如下是各个插件的""""""""""""""""""""""""""""""""""""""""""
 call plug#begin('E:/home/kerwin/vimfiles/pugged')
@@ -101,37 +97,30 @@ Plug 'sjl/gundo.vim'
 	let g:Lf_ShortcutF = '<f3>'
 	map <c-f3> :LeaderfTag<cr>
 	imap <c-f3> :LeaderfTag<cr>
+	map <a-f3> :Leaderf rg -e ""
+	imap <a-f3> :Leaderf rg -e ""
 	let g:Lf_WorkingDirectoryMode='Ac'
-	let g:Lf_RootMarkers= project_name
+	let g:Lf_RootMarkers= ['.root', '.svn', '.git', '.hg', '.project']
 	
-	
-
-" Plug 'kien/ctrlp.vim'
-"     "快速搜索文件的，当然也是一直加载的啦。
-"     let g:ctrlp_map = '<f3>'
-"     let g:ctrlp_cmd = 'CtrlP'
-"     let g:ctrlp_working_path_mode = 'ra'
-"     let g:ctrlp_user_command = 'ag %s -l --nocolor -g "" '  " Windows
-	" let g:ctrlp_user_command = 'dir %s /-n /b /s /a-d'  " Windows
 "快速搜索文件中的内容的
-if executable('ag')
-	let g:ackprg = 'ag --vimgrep'
-	map <a-F3> :Ack 
-	imap <a-F3> :Ack 
-	Plug 'mileszs/ack.vim'
-else 
-	"如果没有ag，就用vim自带的吧
-	map <a-F3> :vimgrep
-	imap <a-F3> :vimgrep
-	" vimgrep /pattern/ %           在当前打开文件中查找
-	" vimgrep /pattern/ *             在当前目录下查找所有
-	" vimgrep /pattern/ **            在当前目录及子目录下查找所有
-	" vimgrep /pattern/ *.c          查找当前目录下所有.c文件
-	" vimgrep /pattern/ **/*         只查找子目录
-endif
+" if executable('ag')
+"     let g:ackprg = 'ag --vimgrep'
+"     map <a-F3> :Ack 
+"     imap <a-F3> :Ack 
+"     Plug 'mileszs/ack.vim'
+" else 
+"     "如果没有ag，就用vim自带的吧
+"     map <a-F3> :vimgrep
+"     imap <a-F3> :vimgrep
+"     " vimgrep /pattern/ %           在当前打开文件中查找
+"     " vimgrep /pattern/ *             在当前目录下查找所有
+"     " vimgrep /pattern/ **            在当前目录及子目录下查找所有
+"     " vimgrep /pattern/ *.c          查找当前目录下所有.c文件
+"     " vimgrep /pattern/ **/*         只查找子目录
+" endif
 "快速配括号等
 "这个跟cscope的快捷键冲突
-Plug 'vim-scripts/surround.vim',{'for':project_file_type}
+Plug 'vim-scripts/surround.vim',{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 
 "tagbar是一个taglist的替代品，比taglist更适合c++使用，函数能够按类区分，支持按类折叠显示等，
 Plug 'majutsushi/Tagbar' ,{'on':'TagbarToggle'} "触发时才加载
@@ -166,7 +155,7 @@ Plug 'kien/rainbow_parentheses.vim'
 	au Syntax * RainbowParenthesesLoadBraces	
 
 " 代码自动提示，按需加载吧。
-Plug 'vim-scripts/AutoComplPop',{'for':project_file_type}
+Plug 'vim-scripts/AutoComplPop',{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 	let g:acp_enableAtStartup = 1
 	let g:acp_behaviorPythonOmniLength = 2
 "就比如yy就是复制一行，dd是删除一行，如下这个插件就是做这个的,肯定是一直加载啦。。
@@ -209,22 +198,36 @@ Plug 'ludovicchabant/vim-gutentags'
 Plug 'skywind3000/gutentags_plus'  
 	let g:gutentags_plus_switch = 1
 	" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
-	let g:gutentags_project_root = project_name
+	let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
 	" 所生成的数据文件的名称
 	let g:gutentags_ctags_tagfile = '.tags'
 	" 同时开启 ctags 和 gtags 支持：
 	" enable gtags module
-	let g:gutentags_modules = ['ctags', 'gtags_cscope']
+    " 同时开启 ctags 和 gtags 支持：
+    let g:gutentags_modules = []
+    if executable('ctags')
+        let g:gutentags_modules += ['ctags']
+    endif
+    if executable('gtags-cscope') && executable('gtags')
+        let g:gutentags_modules += ['gtags_cscope']
+    endif
 	" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
 	" let g:gutentags_cache_dir = expand('~/.cache/tags')
-	let g:gutentags_auto_add_gtags_cscope = 1
+	" "禁用 gutentags 自动加载 gtags 数据库的行为
+    " 避免多个项目数据库相互干扰
+    " 使用plus插件解决问题
+	let g:gutentags_auto_add_gtags_cscope = 0
 	" change focus to quickfix window after search (optional).
 	" 配置 ctags 的参数
-	" let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-	" let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
-	" let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
-
-Plug 'lambdalisue/gina.vim'  ,{'for':project_file_type}
+	let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+	let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+	 let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+Plug 'skywind3000/vim-preview'
+	"这个是高效预览的。
+	autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
+	autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
+Plug 'lambdalisue/gina.vim'  ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 	""这个git，我主要需要的是git status , git add  git commit  , git log , git diff
 	", git push
 	"我设置f9键为显示git，其他的看看按个最常用吧。
@@ -236,6 +239,7 @@ Plug 'lambdalisue/gina.vim'  ,{'for':project_file_type}
 Plug 'skywind3000/asyncrun.vim' ,{'for':['python']}
 	let g:asyncrun_encs = 'gbk' "支持中文很重要。我的终端是中文啊。
 
+
 Plug 'davidhalter/jedi-vim' , { 'for':['python']}
 	let g:jedi#auto_vim_configuration = 1
 	let g:jedi#smart_auto_mappings = 1 "加上这个，就会增加比如，from PIL 后自动输入import ，然后弹出自动补全。
@@ -245,7 +249,7 @@ Plug 'davidhalter/jedi-vim' , { 'for':['python']}
 	let g:jedi#rename_command = "<F2>"
 
 "快速注释代码
-Plug 'scrooloose/nerdcommenter' ,{'for':project_file_type}
+Plug 'scrooloose/nerdcommenter' ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 	" Add spaces after comment delimiters by default
 	let g:NERDSpaceDelims = 1
 	" Use compact syntax for prettified multi-line comments
@@ -257,6 +261,10 @@ Plug 'scrooloose/nerdcommenter' ,{'for':project_file_type}
 	"n\cm : 为光标以下 n 行添加块注释
 	"好像emacs的注释就是alt+;，这里也用这个吧。
 	map <A-;> <leader>c<space>
+
+"snippets补全
+Plug 'SirVer/ultisnips' ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
+Plug 'honza/vim-snippets' ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 
 """"""""""""""""""""""""""""""""""""""""""如下是各个语言的配置。""""""""""""""""""""""""""""""""""""
 func! ProgramConfig()
@@ -273,7 +281,7 @@ func! ProgramConfig()
 	"异步运行代码"
 	nnoremap <F5> :call CompileRunGcc()<cr>
 endfunc
-autocmd FileType ruby,eruby,python,xml,java,cs,lisp,vim,c :call ProgramConfig()
+autocmd FileType c,cpp,ruby,eruby,python,xml,java,cs,lisp,vim,c :call ProgramConfig()
 
 func! PythonConfig()
 	"set foldmethod=indent "代码折叠只以缩进为依据
