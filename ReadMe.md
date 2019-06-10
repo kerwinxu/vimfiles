@@ -6,9 +6,8 @@
 ## 工程管理  
 这方面的插件是用git来做的，比如  
 ### gina.vim  
-这个插件我只放了2个快捷键  
+这个插件我只放了1个快捷键  
 	map <f10> <esc>:Gina   
-	map <c-f10> <esc>:Gdiff<cr>  
 够用就行  
 ### vim-gutentags 和 gutentags_plus  
 这两个插件，我用来自动更新git的，这工程目录的判定是当前文件路径向上递归，直到碰到特殊的文件或者目录，比如git的.git目录，就表示这个目录是在git管理下。  

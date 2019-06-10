@@ -22,18 +22,19 @@ set imcmdline
 " source $VIMRUNTIME/delmenu.vim
 " source $VIMRUNTIME/menu.vim
 " set guifont=Dejavu_Sans_Mono:h11:cANSI
-if has('gui')
-	" set background=light
-	colors solarized
-	" let g:solarized_italic=(abs(g:solarized_italic-1)) | colorscheme solarized
-else
-	colors Zenburn
-endif
+" if has('gui')
+"     " set background=light
+"     colors solarized
+"     " let g:solarized_italic=(abs(g:solarized_italic-1)) | colorscheme solarized
+" else
+"     colors Zenburn
+" endif
+colors solarized
 """"""""""""设置备份及备份目录。
 "必须得先设置生效，然后再设置目录"
 set undofile
-set backup
-set backupdir=D:/Vim/bakfiles
+" set backup
+" set backupdir=D:/Vim/bakfiles
 set undodir=D:/Vim/undodir
 set cursorline "反显光标当前行颜色
 set textwidth=0 "当字符大于这个的时候，会自动换行，取消这个选项吧
@@ -159,8 +160,7 @@ Plug 'vim-scripts/AutoComplPop',{'for':['python', 'c', 'cpp', 'java', 'lua', 'vi
 	let g:acp_enableAtStartup = 1
 	let g:acp_behaviorPythonOmniLength = 2
 "就比如yy就是复制一行，dd是删除一行，如下这个插件就是做这个的,肯定是一直加载啦。。
-Plug 'vim-scripts/YankRing.vim'
-
+" Plug 'vim-scripts/YankRing.vim'
 
 Plug 'w0rp/ale' , { 'for':['python']}
 	let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
