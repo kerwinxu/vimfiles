@@ -1,4 +1,17 @@
-"我想整理一下我的vim配置。分成几个部分
+"我想整理一下我的vim配置
+"我的这个配置是偏重于python的，我打算用作python开发的主要工具，其次是vscode
+"s : search
+"w : window 
+"b : buffer命令
+"p : 工程部分。
+"h : 记录操作的
+"t : 终端。
+"f5 : 运行
+"tag操作
+"	c-] : 
+"	c-t : 后退。
+"
+"。分成几个部分
 "基本部分
 "通用配置
 "插件，都是按需加载。
@@ -10,6 +23,7 @@
 "------------------------------------------------------------------------------
 if(has("win32") || has("win64") || has("win95") || has("win16"))
     let g:iswindows = 1
+	language messages zh_CN.utf-8
 else
     let g:iswindows = 0
 endif
@@ -34,7 +48,6 @@ endif
 set encoding=utf-8
 set langmenu=en
 " set langmenu=zh_CN.utf-8
-language messages zh_CN.utf-8
 set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
 set makeencoding=char
 set imcmdline
@@ -45,6 +58,7 @@ set imcmdline
 """"""""""""设置备份及备份目录。
 "必须得先设置生效，然后再设置目录"
 set undofile
+set path+=**
 " set backup
 " set backupdir=D:/Vim/bakfiles
 if g:iswindows
@@ -73,7 +87,7 @@ set wildmenu "自动补全命令时候使用菜单式匹配列表
 set wildmenu  wildmode=longest,list,full "用于命令行的补全，tab
 "自动补全的
 	autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-	" autocmd FileType python set omnifunc=python3complete#Complete
+	autocmd FileType python set omnifunc=python3complete#Complete
 	autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
 	autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
 	autocmd FileType css set omnifunc=csscomplete#CompleteCSS
@@ -94,16 +108,13 @@ set laststatus=2
 "如下是ctags配置
 set tags=./.tags;,.tags
 set autochdir
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif        "打开文件的适合，跳转到上次编辑的位置          
-"shift+f8，打开终端"
-map <s-f8> <esc>:term<cr>
-imap <s-f8> <esc>:term<cr>
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif        "打开文件的时候，跳转到上次编辑的位置          
+"如下是设置换行自动对齐的
+set autoindent
 
 """"""""""""""""""""""""""""""""""""""""""如下是各个插件的""""""""""""""""""""""""""""""""""""""""""
 call plug#begin('$HOME/vimfiles/pugged')
 filetype off
-	"类似emacs的"
-	Plug 'liuchengxu/vim-which-key'
 	"配色,一个用在gui，一个用在终端
 	Plug 'altercation/vim-colors-solarized'
 	Plug 'jnurmine/Zenburn'
@@ -120,7 +131,7 @@ filetype off
 	"括号高亮，不同颜色的。这个是一直加载吧。
 	Plug 'kien/rainbow_parentheses.vim'
 	" 代码自动提示，按需加载吧。
-	Plug 'vim-scripts/AutoComplPop',{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
+	" Plug 'vim-scripts/AutoComplPop'
 	"动态监测语法
 	Plug 'w0rp/ale' , { 'for':['python']}
 	"如下两个是作为自动管理ctags，gtags等项目的。"
@@ -138,15 +149,56 @@ filetype off
 	"snippets补全
 	Plug 'SirVer/ultisnips' ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 	Plug 'honza/vim-snippets' ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
-"到这里Vundle就完成了
+	"这个是lisp的
+	Plug 'kovisoft/slimv' , {'for':['lisp']}
+	"自动弹出补全的
+	Plug 'Shougo/neocomplete.vim',{'for':['python','c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
+	"这个是好看的状态。
+	" Plug 'vim-airline/vim-airline'
+	"类似emacs的"
+	Plug 'liuchengxu/vim-which-key' 
+	"repl支持"
+	Plug 'sillybun/vim-repl'
 call plug#end()
 filetype plugin indent on     " required! 
 
 
 """""""""""""""""""""""""""""""""""如下是配置各个插件的。""""""""""""""""""""""""""""""""""""""""""""""""
+"先配置不区分语言，都加载的吧。
+"
+if isdirectory(expand("~/vimfiles/pugged/vim-repl/"))
+	let g:repl_program = {
+            \   'python': 'ipython',
+            \   'default': 'zsh',
+            \   'r': 'R',
+            \   'lua': 'lua',
+            \   'vim': 'vim -e',
+            \   }
+	let g:repl_predefine_python = {
+            \   'numpy': 'import numpy as np',
+            \   'matplotlib': 'from matplotlib import pyplot as plt'
+            \   }
+	let g:repl_cursor_down = 1
+	let g:repl_python_automerge = 1
+	let g:repl_ipython_version = '7'
+	nnoremap <leader>r :REPLToggle<Cr>
+	autocmd Filetype python nnoremap <F12> <Esc>:REPLDebugStopAtCurrentLine<Cr>
+	autocmd Filetype python nnoremap <F10> <Esc>:REPLPDBN<Cr>
+	autocmd Filetype python nnoremap <F11> <Esc>:REPLPDBS<Cr>
+	let g:repl_position = 3
+endif
+"先判断是否是lisp系统吧。
+if &filetype == 'lisp' 
+	if isdirectory(expand("~/vimfiles/pugged/slimv"))
+		let g:slimv_swank_cmd = '!start "d:/SBCL/1.4.2/sbcl.exe"
+			\ --load "E:\\home\\kerwin\\vimfiles\\pugged\\slimv\\slime\\start-swank.lisp" '
+	endif
+endif
+
 if isdirectory(expand("~/vimfiles/pugged/async.vim/"))
 	let g:asyncrun_encs = 'gbk' "支持中文很重要。我的终端是中文啊。
 endif
+
 if isdirectory(expand("~/vimfiles/pugged/vim-gutentags/"))
 	let g:gutentags_plus_switch = 1
 	" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
@@ -180,73 +232,53 @@ if isdirectory(expand("~/vimfiles/pugged/vim-preview/"))
 	autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 	autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
 endif
+"gina的配置。
 if isdirectory(expand("~/vimfiles/pugged/gina.vim/"))
 	""这个git，我主要需要的是git status , git add  git commit  , git log , git diff
 	", git push
 	"我设置f9键为显示git，其他的看看按个最常用吧。
 	"其中git log 用 Gina log 这个显示好些
 	"而git diff 用 Gdiff好些
-	map <f10> <esc>:Gina 
 endif
-if isdirectory(expand("~/vimfiles/pugged/jedi-vim/"))
-	let g:jedi#auto_vim_configuration = 1
-	let g:jedi#smart_auto_mappings = 1 "加上这个，就会增加比如，from PIL 后自动输入import ，然后弹出自动补全。
-	" let g:neocomplete#force_omni_input_patterns.python.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
-	let g:jedi#completions_command = "<a-Space>"
-	let g:jedi#documentation_command = "<leader>k"
-	let g:jedi#rename_command = "<F2>"
+
+
+if isdirectory(expand("~/vimfiles/pugged/neocomplete.vim/"))
+	" Disable AutoComplPop.
+	let g:acp_enableAtStartup = 0
+	" Use neocomplete.
+	let g:neocomplete#enable_at_startup = 1
+	let g:neocomplete#enable_auto_select = 1
+	" Use smartcase.
+	let g:neocomplete#enable_smart_case = 1
+	" Set minimum syntax keyword length.
+	let g:neocomplete#sources#syntax#min_keyword_length = 3
+	" Enable heavy omni completion.
+	if !exists('g:neocomplete#sources#omni#input_patterns')
+	  let g:neocomplete#sources#omni#input_patterns = {}
+	endif
+	"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+	"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+	"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+	let g:neocomplete#sources#omni#input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+	" For perlomni.vim setting.
+	" https://github.com/c9s/perlomni.vim
+	let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
 endif
-if isdirectory(expand("~/vimfiles/pugged/nerdcommenter/"))
-	" Add spaces after comment delimiters by default
-	let g:NERDSpaceDelims = 1
-	" Use compact syntax for prettified multi-line comments
-	let g:NERDCompactSexyComs = 1
-	" Align line-wise comment delimiters flush left instead of following code indentation
-	let g:NERDDefaultAlign = 'left'
-	"n\cc : 为光标以下 n 行添加注释
-	"n\cu : 为光标以下 n 行取消注释
-	"n\cm : 为光标以下 n 行添加块注释
-	"好像emacs的注释就是alt+;，这里也用这个吧。
-	map <a-;> <plug>NERDCommenterToggle
+
+if &filetype == 'python' 
+	if isdirectory(expand("~/vimfiles/pugged/jedi-vim/"))
+		let g:jedi#smart_auto_mappings = 1 ""from module.name<space>`
+		let g:jedi#completions_command = "<a-Space>"
+		let g:jedi#documentation_command = "<leader>k"
+		let g:jedi#rename_command = "<F2>"
+		 let g:jedi#show_call_signatures = "2"
+		 let g:jedi#popup_select_first = 1
+
+	endif
 endif
+
 "
-if isdirectory(expand("~/vimfiles/pugged/ale/"))
-	let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
-	"始终开启标志列
-	let g:ale_sign_column_always = 1
-	let g:ale_set_highlights = 0
-	"自定义error和warning图标
-	let g:ale_sign_error = 'E:'
-	let g:ale_sign_warning = 'W:'
-	" 在vim自带的状态栏中整合ale
-	let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
-	" 显示Linter名称,出错或警告等相关信息
-	let g:ale_echo_msg_error_str = 'E'
-	let g:ale_echo_msg_warning_str = 'W'
-	let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-	" "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
-	nmap sp <Plug>(ale_previous_wrap)
-	nmap sn <Plug>(ale_next_wrap)
-	" "<Leader>s触发/关闭语法检查
-	" " nmap <Leader>s :ALEToggle<CR>
-	" "<Leader>d查看错误或警告的详细信息
-	" nmap <Leader>d :ALEDetail<CR>
-	" Check Python files with flake8 and pylint.
-	let g:ale_linters =	{'python': ['flake8','pylint']}
-	" Fix Python files with autopep8 and yapf.
-	let g:ale_fixers = {'python':['autopep8', 'yapf']}
-	" Disable warnings about trailing whitespace for Python files.
-	let g:ale_warn_about_trailing_whitespace = 0
-	let g:ale_python_flake8_args = '--ignore=E501'
-	let g:ale_fix_on_save = 1 "保存的时候自动更改格式错误。
-	" Write this in your vimrc file
-	" let g:ale_set_loclist = 0
-	" let g:ale_set_quickfix = 1
-endif
-if isdirectory(expand("~/vimfiles/pugged/AutoComplPop/"))
-	let g:acp_enableAtStartup = 1
-	let g:acp_behaviorPythonOmniLength = 2
-endif
 if isdirectory(expand("~/vimfiles/pugged/gundo.vim/"))
 	let  g:gundo_prefer_python3=1 
 endif
@@ -261,7 +293,6 @@ if isdirectory(expand("~/vimfiles/pugged/vim-colors-solarized/"))
 	endif
 endif
 "配置LeaderF"
-
 if isdirectory(expand("~/vimfiles/pugged/LeaderF/"))
 	let g:Lf_ShortcutF = '<f3>'
 	let g:Lf_ShortcutB='<leader>sb'
@@ -350,8 +381,6 @@ func! ProgramConfig()
 	if g:iswindows
 		source D:/gtags/share/gtags/gtags.vim
 		source D:/gtags/share/gtags/gtags-cscope.vim
-		nmap <f12> :GscopeFind g <C-R><C-W><cr>"跳转到光标所在函数的定义
-		nmap <s-f12> :GscopeFind c <C-R><C-W><cr>搜索光标所在函数的引用
 		nmap <S-f3> :GscopeFind 
 	endif
 	"let g:gutentags_define_advanced_commads = 1
@@ -360,6 +389,60 @@ func! ProgramConfig()
 	imap <c-f8> <esc>:call FormartSrc()<CR>
 	"异步运行代码"
 	nnoremap <F5> :call CompileRunGcc()<cr>
+	nnoremap <c-f5> : :REPLToggle<cr>
+
+	if isdirectory(expand("~/vimfiles/pugged/ale/"))
+		let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
+		"始终开启标志列
+		let g:ale_sign_column_always = 1
+		let g:ale_set_highlights = 0
+		"自定义error和warning图标
+		let g:ale_sign_error = 'E:'
+		let g:ale_sign_warning = 'W:'
+		" 在vim自带的状态栏中整合ale
+		let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+		" 显示Linter名称,出错或警告等相关信息
+		let g:ale_echo_msg_error_str = 'E'
+		let g:ale_echo_msg_warning_str = 'W'
+		let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+		" "普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+		nmap sp <Plug>(ale_previous_wrap)
+		nmap sn <Plug>(ale_next_wrap)
+		" "<Leader>s触发/关闭语法检查
+		" " nmap <Leader>s :ALEToggle<CR>
+		" "<Leader>d查看错误或警告的详细信息
+		" nmap <Leader>d :ALEDetail<CR>
+		" Check Python files with flake8 and pylint.
+		let g:ale_linters =	{'python': ['flake8','pylint']}
+		" Fix Python files with autopep8 and yapf.
+		let g:ale_fixers = {'python':['autopep8', 'yapf']}
+		" Disable warnings about trailing whitespace for Python files.
+		let g:ale_warn_about_trailing_whitespace = 0
+		let g:ale_python_flake8_args = '--ignore=E501'
+		let g:ale_fix_on_save = 1 "保存的时候自动更改格式错误。
+		" Write this in your vimrc file
+		" let g:ale_set_loclist = 0
+		" let g:ale_set_quickfix = 1
+	endif
+	"配置注释的部分，也是在这里吧。
+	if isdirectory(expand("~/vimfiles/pugged/nerdcommenter/"))
+		" Add spaces after comment delimiters by default
+		let g:NERDSpaceDelims = 1
+		" Use compact syntax for prettified multi-line comments
+		let g:NERDCompactSexyComs = 1
+		" Align line-wise comment delimiters flush left instead of following code indentation
+		let g:NERDDefaultAlign = 'left'
+		"n\cc : 为光标以下 n 行添加注释
+		"n\cu : 为光标以下 n 行取消注释
+		"n\cm : 为光标以下 n 行添加块注释
+		"好像emacs的注释就是alt+;，这里也用这个吧。
+		map <a-;> <plug>NERDCommenterToggle
+	endif
+	"自动补全的。
+	if isdirectory(expand("~/vimfiles/pugged/AutoComplPop/"))
+		let g:acp_enableAtStartup = 1
+		let g:acp_behaviorPythonOmniLength = 2
+	endif
 endfunc
 """"""""""""""""""格式化代码""""""""""""""""
 "定义FormartSrc()
@@ -572,12 +655,20 @@ if isdirectory(expand("~/vimfiles/pugged/vim-which-key/"))
 	nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
 	nnoremap <silent> <localleader> :<c-u>WhichKey  ','<CR>
 	let g:which_key_map = {}
+
 	nnoremap  <leader>h :GundoToggle<CR>
 	let g:which_key_map.h = "Gundo"
+	
+	nnoremap  <leader>t :term<CR>
+	let g:which_key_map.t = "终端"
+	
 	let g:which_key_map.s = {
 				\'name':'+search',
 				\'f':['<f3>','search file <f3>'],
 				\'t':['LeaderfTag','search tag <c-f3>'],
+				\ 's':[':GscopeFind','查找符号'],
+				\ 'g':[':GscopeFind g <C-R><C-W><cr>','查找定义'],
+				\ 'c':[':GscopeFind c <C-R><C-W><cr>','查找引用'],
 				\}
 	let g:which_key_map.b = {
 		  \ 'name' : '+buffer' ,
@@ -611,6 +702,27 @@ if isdirectory(expand("~/vimfiles/pugged/vim-which-key/"))
       \ 'v' : ['<C-W>v'     , 'split-window-below']    ,
       \ '?' : ['Windows'    , 'fzf-window']            ,
       \ }
+
+	let g:which_key_map['g'] = {
+				\ 'name' : '+Gina',
+				\ 's':[ ':Gina status' , ':Gina status'],
+				\ 'p':[ ':Gina push' , ':Gina push'],
+				\ 'c':[ ':Gina commit' , ':Gina commit'],
+				\ 'd':[ ':Gina diff' , 'Gina diff'],}
+
+	let g:which_key_map['r'] = {
+				\ 'name' : '+Run&Debug',
+				\ 'r':[ '<f5>' , '+Run'],
+				\ 'c':[ ':REPLDebugStopAtCurrentLine' , ':REPLDebugStopAtCurrentLine'],
+				\ 'n':[ ':REPLPDBN' , ':REPLPDBN'],
+				\ 's':[ ':REPLPDBS' , ':REPLPDBS'],
+				\ 'a':[ ':call AddPythonBreak()' , '添加python断点'],
+				\ }
+
+	let g:which_key_map['c'] = {
+				\ 'name' : '+Comment',
+				\ 'c':[ '<plug>NERDCommenterToggle' , '通用注释'],
+				\ 'f':[ ':call CommentPython()' , 'python函数或者类注释'],}
 	call which_key#register('<Space>', "g:which_key_map")
 endif
 
