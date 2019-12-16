@@ -24,14 +24,14 @@
 "------------------------------------------------------------------------------
 if(has("win32") || has("win64") || has("win95") || has("win16"))
 	if !filereadable(expand("~/vimfiles/autoload/plug.vim"))
-		exec "!curl -fLo ~/vimfiles/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" 
+		exec "!curl -fLo ".$HOME."/vimfiles/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" 
 	endif
     let g:iswindows = 1
 	let g:plug_path = "~/vimfiles/pugged/"   "win的插件目录放在这里吧。
 	language messages zh_CN.utf-8
 else
 	if !filereadable(expand("~/.vim/autoload/plug.vim"))
-		exec "curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" 
+		exec "!curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" 
 	endif
     let g:iswindows = 0
 	let g:plug_path = "~/.vim/pugged/"       "其他系统的插件目录是这里吧
