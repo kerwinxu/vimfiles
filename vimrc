@@ -139,9 +139,12 @@ filetype off
 	Plug 'skywind3000/gutentags_plus'  
 	"这个是高效预览的。
 	Plug 'skywind3000/vim-preview'
+	"git相关"
 	Plug 'lambdalisue/gina.vim'  ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
+	" Plug 'airblade/vim-gitgutter'  ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
+
 	"这个是异步执行的"
-	Plug 'skywind3000/asyncrun.vim' ,{'for':['python']}
+	Plug 'skywind3000/asyncrun.vim' ,{'for':['python','scheme','java']}
 	"python的自动补全，这个是最好用的一个。"
 	Plug 'davidhalter/jedi-vim' , { 'for':['python']}
 	"快速注释代码
@@ -150,7 +153,10 @@ filetype off
 	Plug 'SirVer/ultisnips' ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 	Plug 'honza/vim-snippets' ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 	"这个是lisp的
-	Plug 'kovisoft/slimv' , {'for':['lisp']}
+	Plug 'kovisoft/slimv' , {'for':['scheme']}
+	Plug 'guns/vim-sexp' , {'for':['scheme', 'racket']}
+	Plug 'MicahElliott/vrod'  , {'for':['scheme', 'racket']}
+	Plug 'wlangstroth/vim-racket' , {'for':['scheme', 'racket']}
 	"自动弹出补全的
 	Plug 'Shougo/neocomplete.vim',{'for':['python','c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 	"这个是好看的状态。
@@ -158,7 +164,8 @@ filetype off
 	"类似emacs的"
 	Plug 'liuchengxu/vim-which-key' 
 	"repl支持"
-	Plug 'sillybun/vim-repl'
+	Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+	Plug 'sillybun/vim-repl',{'for':['python', 'lisp', 'sh', 'lua','scheme']}
 call plug#end()
 filetype plugin indent on     " required! 
 
@@ -173,6 +180,7 @@ if isdirectory(expand("~/vimfiles/pugged/vim-repl/"))
             \   'r': 'R',
             \   'lua': 'lua',
             \   'vim': 'vim -e',
+            \   'scheme': 'scheme',
             \   }
 	let g:repl_predefine_python = {
             \   'numpy': 'import numpy as np',
@@ -181,7 +189,7 @@ if isdirectory(expand("~/vimfiles/pugged/vim-repl/"))
 	let g:repl_cursor_down = 1
 	let g:repl_python_automerge = 1
 	let g:repl_ipython_version = '7'
-	nnoremap <leader>r :REPLToggle<Cr>
+	nnoremap <s-f5> :REPLToggle<Cr>
 	autocmd Filetype python nnoremap <F12> <Esc>:REPLDebugStopAtCurrentLine<Cr>
 	autocmd Filetype python nnoremap <F10> <Esc>:REPLPDBN<Cr>
 	autocmd Filetype python nnoremap <F11> <Esc>:REPLPDBS<Cr>
@@ -193,6 +201,14 @@ if &filetype == 'lisp'
 		let g:slimv_swank_cmd = '!start "d:/SBCL/1.4.2/sbcl.exe"
 			\ --load "E:\\home\\kerwin\\vimfiles\\pugged\\slimv\\slime\\start-swank.lisp" '
 	endif
+endif
+
+"先判断是否是scheme"
+if &filetype == 'scheme' 
+	if isdirectory(expand("~/vimfiles/pugged/slimv"))
+		let g:slimv_swank_cmd = '!start "scheme.exe"
+	endif
+
 endif
 
 if isdirectory(expand("~/vimfiles/pugged/async.vim/"))
@@ -289,7 +305,7 @@ if isdirectory(expand("~/vimfiles/pugged/vim-colors-solarized/"))
 		set background=light
 		colo solarized
 	else
-		colors Zenburn
+		colo zenburn
 	endif
 endif
 "配置LeaderF"
@@ -335,7 +351,7 @@ if isdirectory(expand("~/vimfiles/pugged/rainbow_parentheses.vim/"))
 	au Syntax * RainbowParenthesesLoadBraces	
 endif
 """"""""""""""""""""""""""""""""""""""""""如下是各个语言的配置。""""""""""""""""""""""""""""""""""""
-autocmd FileType c,cpp,ruby,eruby,python,xml,java,cs,lisp,vim,c :call ProgramConfig()
+autocmd FileType c,cpp,ruby,eruby,python,xml,java,cs,lisp,vim,c,scheme :call ProgramConfig()
 autocmd FileType python :call PythonConfig()
 " 保存代码文件前自动修改最后修改时间
 au BufWritePre *.sh           call LastChange('#')
@@ -518,6 +534,11 @@ func! CompileRunGcc()
 		endif
 	elseif  &filetype == 'markdown'
 		" exec ":Instantmd"
+	elseif  &filetype == 'scheme'
+			exec "AsyncRun -raw scheme %"
+			exec "copen"
+			exec "wincmd p"
+
 	endif
 endfunc
 
