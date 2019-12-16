@@ -18,14 +18,23 @@
 "然后各个语言的配置。
 "最底下是一堆函数。
 "先判断一堆设置
+"因为要用到Plug，所以这先判断了吧
 "------------------------------------------------------------------------------
 "  < 判断操作系统是否是 Windows 还是 Linux >
 "------------------------------------------------------------------------------
 if(has("win32") || has("win64") || has("win95") || has("win16"))
+	if !filereadable(expand("~/vimfiles/autoload/plug.vim"))
+		exec "!curl -fLo ~/vimfiles/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" 
+	endif
     let g:iswindows = 1
+	let g:plug_path = "~/vimfiles/pugged/"   "win的插件目录放在这里吧。
 	language messages zh_CN.utf-8
 else
+	if !filereadable(expand("~/.vim/autoload/plug.vim"))
+		exec "curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" 
+	endif
     let g:iswindows = 0
+	let g:plug_path = "~/.vim/pugged/"       "其他系统的插件目录是这里吧
 endif
 
 "------------------------------------------------------------------------------
@@ -113,7 +122,7 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 set autoindent
 
 """"""""""""""""""""""""""""""""""""""""""如下是各个插件的""""""""""""""""""""""""""""""""""""""""""
-call plug#begin('$HOME/vimfiles/pugged')
+call plug#begin(g:plug_path)
 filetype off
 	"配色,一个用在gui，一个用在终端
 	Plug 'altercation/vim-colors-solarized'
@@ -173,7 +182,7 @@ filetype plugin indent on     " required!
 """""""""""""""""""""""""""""""""""如下是配置各个插件的。""""""""""""""""""""""""""""""""""""""""""""""""
 "先配置不区分语言，都加载的吧。
 "
-if isdirectory(expand("~/vimfiles/pugged/vim-repl/"))
+if isdirectory(expand(g:plug_path. "/vim-repl/"))
 	let g:repl_program = {
             \   'python': 'ipython',
             \   'default': 'zsh',
@@ -197,7 +206,7 @@ if isdirectory(expand("~/vimfiles/pugged/vim-repl/"))
 endif
 "先判断是否是lisp系统吧。
 if &filetype == 'lisp' 
-	if isdirectory(expand("~/vimfiles/pugged/slimv"))
+	if isdirectory(expand(g:plug_path. "slimv"))
 		let g:slimv_swank_cmd = '!start "d:/SBCL/1.4.2/sbcl.exe"
 			\ --load "E:\\home\\kerwin\\vimfiles\\pugged\\slimv\\slime\\start-swank.lisp" '
 	endif
@@ -205,17 +214,17 @@ endif
 
 "先判断是否是scheme"
 if &filetype == 'scheme' 
-	if isdirectory(expand("~/vimfiles/pugged/slimv"))
+	if isdirectory(expand(g:plug_path. "slimv"))
 		let g:slimv_swank_cmd = '!start "scheme.exe"
 	endif
 
 endif
 
-if isdirectory(expand("~/vimfiles/pugged/async.vim/"))
+if isdirectory(expand(g:plug_path. "async.vim/"))
 	let g:asyncrun_encs = 'gbk' "支持中文很重要。我的终端是中文啊。
 endif
 
-if isdirectory(expand("~/vimfiles/pugged/vim-gutentags/"))
+if isdirectory(expand(g:plug_path. "vim-gutentags/"))
 	let g:gutentags_plus_switch = 1
 	" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
 	let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
@@ -244,12 +253,12 @@ if isdirectory(expand("~/vimfiles/pugged/vim-gutentags/"))
 	let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
 	 let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
 endif
-if isdirectory(expand("~/vimfiles/pugged/vim-preview/"))
+if isdirectory(expand(g:plug_path. "vim-preview/"))
 	autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 	autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
 endif
 "gina的配置。
-if isdirectory(expand("~/vimfiles/pugged/gina.vim/"))
+if isdirectory(expand(g:plug_path. "gina.vim/"))
 	""这个git，我主要需要的是git status , git add  git commit  , git log , git diff
 	", git push
 	"我设置f9键为显示git，其他的看看按个最常用吧。
@@ -258,7 +267,7 @@ if isdirectory(expand("~/vimfiles/pugged/gina.vim/"))
 endif
 
 
-if isdirectory(expand("~/vimfiles/pugged/neocomplete.vim/"))
+if isdirectory(expand(g:plug_path. "neocomplete.vim/"))
 	" Disable AutoComplPop.
 	let g:acp_enableAtStartup = 0
 	" Use neocomplete.
@@ -283,7 +292,7 @@ if isdirectory(expand("~/vimfiles/pugged/neocomplete.vim/"))
 endif
 
 if &filetype == 'python' 
-	if isdirectory(expand("~/vimfiles/pugged/jedi-vim/"))
+	if isdirectory(expand(g:plug_path. "jedi-vim/"))
 		let g:jedi#smart_auto_mappings = 1 ""from module.name<space>`
 		let g:jedi#completions_command = "<a-Space>"
 		let g:jedi#documentation_command = "<leader>k"
@@ -295,11 +304,11 @@ if &filetype == 'python'
 endif
 
 "
-if isdirectory(expand("~/vimfiles/pugged/gundo.vim/"))
+if isdirectory(expand(g:plug_path. "gundo.vim/"))
 	let  g:gundo_prefer_python3=1 
 endif
 "配色配置。
-if isdirectory(expand("~/vimfiles/pugged/vim-colors-solarized/"))
+if isdirectory(expand(g:plug_path. "vim-colors-solarized/"))
 	if g:isGUI
 		syntax enable
 		set background=light
@@ -309,7 +318,7 @@ if isdirectory(expand("~/vimfiles/pugged/vim-colors-solarized/"))
 	endif
 endif
 "配置LeaderF"
-if isdirectory(expand("~/vimfiles/pugged/LeaderF/"))
+if isdirectory(expand(g:plug_path. "LeaderF/"))
 	let g:Lf_ShortcutF = '<f3>'
 	let g:Lf_ShortcutB='<leader>sb'
 	map <c-f3> :LeaderfTag<cr>
@@ -320,12 +329,12 @@ if isdirectory(expand("~/vimfiles/pugged/LeaderF/"))
 	let g:Lf_RootMarkers= ['.root', '.svn', '.git', '.hg', '.project']
 endif
 
-if isdirectory(expand("~/vimfiles/pugged/Tagbar")) &&  isdirectory(expand("~/vimfiles/pugged/The-NERD-tree"))
+if isdirectory(expand(g:plug_path. "Tagbar")) &&  isdirectory(expand(g:plug_path. "The-NERD-tree"))
 	map <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
 	imap <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
 endif
 
-if isdirectory(expand("~/vimfiles/pugged/rainbow_parentheses.vim/"))
+if isdirectory(expand(g:plug_path. "rainbow_parentheses.vim/"))
 	let g:rbpt_colorpairs = [
     \ ['brown',       'RoyalBlue3'],
     \ ['Darkblue',    'SeaGreen3'],
@@ -407,7 +416,7 @@ func! ProgramConfig()
 	nnoremap <F5> :call CompileRunGcc()<cr>
 	nnoremap <c-f5> : :REPLToggle<cr>
 
-	if isdirectory(expand("~/vimfiles/pugged/ale/"))
+	if isdirectory(expand(g:plug_path. "ale/"))
 		let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
 		"始终开启标志列
 		let g:ale_sign_column_always = 1
@@ -441,7 +450,7 @@ func! ProgramConfig()
 		" let g:ale_set_quickfix = 1
 	endif
 	"配置注释的部分，也是在这里吧。
-	if isdirectory(expand("~/vimfiles/pugged/nerdcommenter/"))
+	if isdirectory(expand(g:plug_path. "nerdcommenter/"))
 		" Add spaces after comment delimiters by default
 		let g:NERDSpaceDelims = 1
 		" Use compact syntax for prettified multi-line comments
@@ -455,7 +464,7 @@ func! ProgramConfig()
 		map <a-;> <plug>NERDCommenterToggle
 	endif
 	"自动补全的。
-	if isdirectory(expand("~/vimfiles/pugged/AutoComplPop/"))
+	if isdirectory(expand(g:plug_path. "AutoComplPop/"))
 		let g:acp_enableAtStartup = 1
 		let g:acp_behaviorPythonOmniLength = 2
 	endif
@@ -671,7 +680,7 @@ function! LastChange(...)
 endfunction
 
 " 最后是如下是配置类似spaceemacs的那个按键的"
-if isdirectory(expand("~/vimfiles/pugged/vim-which-key/"))
+if isdirectory(expand(g:plug_path. "vim-which-key/"))
 	let g:mapleader="\<Space>"
 	nnoremap <silent> <leader>      :<c-u>WhichKey '<Space>'<CR>
 	nnoremap <silent> <localleader> :<c-u>WhichKey  ','<CR>
