@@ -97,7 +97,7 @@ filetype off
 	" \ 'branch': 'next',
 	" \ 'do': 'powershell -executionpolicy bypass -File install.ps1',
 	" \ }
-	" " (Optional) Multi-entry selection UI.
+	" (Optional) Multi-entry selection UI.
 	" Plug 'junegunn/fzf'
 	" if has('nvim')
 		" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -111,18 +111,19 @@ filetype off
 	  " \ 'python': ['pyls'],
 	  " \ } 
 	
-	Plug 'prabirshrestha/asyncomplete.vim'
-	Plug 'prabirshrestha/async.vim'
-	Plug 'prabirshrestha/vim-lsp'
-	Plug 'prabirshrestha/asyncomplete-lsp.vim'
-	if executable('pyls')
-		" pip install python-language-server
-		au User lsp_setup call lsp#register_server({
-			\ 'name': 'pyls',
-			\ 'cmd': {server_info->['pyls']},
-			\ 'whitelist': ['python'],
-			\ })
-	endif
+	"可以用，但不太稳定。
+	" Plug 'prabirshrestha/asyncomplete.vim'
+	" Plug 'prabirshrestha/async.vim'
+	" Plug 'prabirshrestha/vim-lsp'
+	" Plug 'prabirshrestha/asyncomplete-lsp.vim'
+	" if executable('pyls')
+		" " pip install python-language-server
+		" au User lsp_setup call lsp#register_server({
+			" \ 'name': 'pyls',
+			" \ 'cmd': {server_info->['pyls']},
+			" \ 'whitelist': ['python'],
+			" \ })
+	" endif
 
 
 call plug#end()
@@ -178,7 +179,7 @@ function! LoadPlug(timer) abort
 			let g:neocomplete#sources#omni#input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
 			let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
 			let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-			" exec ":NeoCompleteEnable"
+			exec ":NeoCompleteEnable"
 	endif
 endfunction
 call timer_start(100, 'LoadPlug')
@@ -246,12 +247,12 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 set autoindent
 
 """""""""""""""""""""""""""""""""""""如下是各个插件的配置
-"配置lsp
-map <F2> <ESC>:LspRename<CR>
-map <F12> <ESC>:LspDefinition<CR>
-map <s-F12> <ESC>:LspReferences<CR>
-let g:lsp_fold_enabled = 0
 
+"配置lsp
+" map <F2> <ESC>:LspRename<CR>
+" map <F12> <ESC>:LspDefinition<CR>
+" map <s-F12> <ESC>:LspReferences<CR>
+" let g:lsp_fold_enabled = 0
 
 
 
@@ -279,17 +280,17 @@ autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
 
 " let g:gutentags_plus_nomap = 1
-" noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
-" noremap <silent> <s-f12> :GscopeFind s <C-R><C-W><cr>
-" noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
-" noremap <silent> <f12> :GscopeFind g <C-R><C-W><cr>
-" noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
-" noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
-" noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
-" noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
-" noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
-" noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
-" noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
+noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
+noremap <silent> <s-f12> :GscopeFind s <C-R><C-W><cr>
+noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
+noremap <silent> <f12> :GscopeFind g <C-R><C-W><cr>
+noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
+noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
+noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
+noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
+noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
 
 let  g:gundo_prefer_python3=1 
 "配色配置。
