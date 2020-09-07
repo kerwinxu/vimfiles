@@ -38,7 +38,7 @@ set makeencoding=char
 set imcmdline
 
 "判断操作系统，然后下载插件管理系统。
-if( has("win64") || has("win32") || has("win95") || has("win16"))
+if(has("win64") || has("win32") || has("win95") || has("win16"))
 	if !filereadable(expand("~/vimfiles/autoload/plug.vim"))
 		exec "!curl -fLo ".$HOME."/vimfiles/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" 
 	endif
@@ -51,6 +51,7 @@ else
 	endif
     let g:iswindows = 0
 	let g:plug_path = "~/.vim/pugged/"       "其他系统的插件目录是这里吧
+	map ;y : !/mnt/c/Windows/System32/clip.exe<cr>u
 endif
 
 if has("gui_running")
@@ -67,6 +68,7 @@ filetype off
 	"配色,一个用在gui，一个用在终端
 	Plug 'altercation/vim-colors-solarized'
 	Plug 'jnurmine/Zenburn'
+
 	Plug 'sjl/gundo.vim'  "Gnudo是保存更改记录的,
 	Plug 'vim-scripts/surround.vim' "快速配括号等 这个跟cscope的快捷键冲突
 	Plug 'kien/rainbow_parentheses.vim' "括号高亮，不同颜色的。这个是一直加载吧。
@@ -76,7 +78,6 @@ filetype off
 	Plug 'lambdalisue/gina.vim'  
 	Plug 'liuchengxu/vim-which-key'
 	Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' } "搜索文件或者内容的
-	" Plug 'airblade/vim-gitgutter'  ,{'for':['python', 'c', 'cpp', 'java', 'lua', 'vim', 'cs', 'css', 'html', 'js']}
 	""如下是触发时才加载的。
 	Plug 'majutsushi/Tagbar' ,{'on':'TagbarToggle'} "触发时才加载
 	Plug 'vim-scripts/The-NERD-tree' ,{'on':'NERDTreeToggle'} "树形目录插件
@@ -87,18 +88,6 @@ filetype off
 	Plug 'SirVer/ultisnips' ,{'for':[]} "snippets补全
 	Plug 'honza/vim-snippets',{'for':[]}
 	Plug 'Shougo/neocomplete.vim',{'for':[]} "自动弹出补全的
-
-	"如下的只是在python中打开。
-	Plug 'davidhalter/jedi-vim' , { 'for':[]}
-	Plug 'python-mode/python-mode', { 'for': [], } , "启动慢点，但跟jedi一样，同样没有查找引用啊
-
-	"lsp的配置如下，但不好用，十分的不好用
-	" Plug 'autozimu/LanguageClient-neovim', {
-	" \ 'branch': 'next',
-	" \ 'do': 'powershell -executionpolicy bypass -File install.ps1',
-	" \ }
-	" (Optional) Multi-entry selection UI.
-	" Plug 'junegunn/fzf'
 	" if has('nvim')
 		" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 	" else
@@ -106,7 +95,34 @@ filetype off
 		" Plug 'roxma/nvim-yarp'
 		" Plug 'roxma/vim-hug-neovim-rpc'
 	" endif
-	" let g:deoplete#enable_at_startup = 1
+	" Plug 'zchee/deoplete-jedi',
+
+	"不稳定啊。
+	" Plug 'neoclide/coc.nvim', {'branch': 'release'}
+	" nmap <f12> gd <Plug>(coc-definition)
+	" nmap <s-f12> <Plug>(coc-references)
+
+	"如下的只是在python中打开。
+	Plug 'davidhalter/jedi-vim' , { 'for':[]}
+	" Plug 'python-mode/python-mode', { 'for': [], } , "启动慢点，但跟jedi一样，同样没有查找引用啊
+
+	"如下是只是c等其他语言的
+	Plug 'ycm-core/YouCompleteMe' , {'for':[]}
+	""打算c开发用vscode和vs了，这里就不用这个了，太耗费启动时间了。
+		if(has("win64") || has("win32") || has("win95") || has("win16")) 
+			let g:ycm_global_ycm_extra_conf='~/vimfiles/pugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
+		else
+			let g:ycm_global_ycm_extra_conf='~/.vim/pugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
+		endif
+		inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>" |            
+		let g:ycm_seed_identifiers_with_syntax = 1                  " 语法关键字补全
+		let g:ycm_min_num_of_chars_for_completion=2                 " 从第2个键入字符就开始罗列匹配项
+
+	"lsp的配置如下，但不好用，十分的不好用
+	" Plug 'autozimu/LanguageClient-neovim', {
+	" \ 'branch': 'next',
+	" \ 'do': 'powershell -executionpolicy bypass -File install.ps1',
+	" \ }
 	" let g:LanguageClient_serverCommands = {                                                                                       
 	  " \ 'python': ['pyls'],
 	  " \ } 
@@ -124,6 +140,9 @@ filetype off
 			" \ 'whitelist': ['python'],
 			" \ })
 	" endif
+	" 如下是支持markdown的插件
+	Plug 'godlygeek/tabular' , { 'for':['markdown']}
+	Plug 'plasticboy/vim-markdown' , { 'for':['markdown']}
 
 
 call plug#end()
@@ -131,13 +150,7 @@ filetype plugin indent on     " required!
 
 "插件大多数是后来加载的
 function! LoadPlug(timer) abort
-	if  &filetype == 'python' 
-		call plug#load('jedi-vim')
-			let g:jedi#rename_command = "<f2>"
-			let g:jedi#smart_auto_mappings = 1 ""from module.name<space>`
-			let g:jedi#completions_enabled = 1  "用coc来补全。
 
-	endif
 	if &filetype == 'c' ||  &filetype == 'python' ||  &filetype == 'cpp' ||  &filetype == 'java' ||  &filetype == 'vim' 
 		call plug#load('ale')
 			let g:ale_linters_explicit = 1 "除g:ale_linters指定，其他不可用
@@ -151,7 +164,7 @@ function! LoadPlug(timer) abort
 			let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 			nmap sp <Plug>(ale_previous_wrap)
 			nmap sn <Plug>(ale_next_wrap)
-			let g:ale_linters =	{'python': ['flake8','pylint']}
+			let g:ale_linters =	{'python': ['flake8','pylint'],'c':['clang'],'c++':['clang'],'javascript': ['prettier', 'eslint']}
 			let g:ale_fixers = {'python':['autopep8', 'yapf']}
 			let g:ale_warn_about_trailing_whitespace = 0
 			let g:ale_python_flake8_args = '--ignore=E501'
@@ -159,27 +172,27 @@ function! LoadPlug(timer) abort
 			" Write this in your vimrc file
 			" let g:ale_set_loclist = 0
 			" let g:ale_set_quickfix = 1
-		call plug#load('asyncrun.vim')
-			let g:asyncrun_encs = 'gbk' "支持中文很重要。我的终端是中文啊。
+		" call plug#load('asyncrun.vim')
+			" let g:asyncrun_encs = 'gbk' "支持中文很重要。我的终端是中文啊。
 		call plug#load('nerdcommenter')
 			let g:NERDSpaceDelims = 1 "注释后边加上空格
 			map <a-;> <plug>NERDCommenterToggle
 		call plug#load('ultisnips')
 		call plug#load('vim-snippets')
-		call plug#load('neocomplete.vim')
-			let g:acp_enableAtStartup = 1
-			let g:acp_behaviorPythonOmniLength = 2
-			let g:neocomplete#enable_at_startup = 1
-			let g:neocomplete#enable_smart_case = 1
-			let g:neocomplete#enable_auto_select = 1
-			let g:neocomplete#sources#syntax#min_keyword_length = 3
-			if !exists('g:neocomplete#sources#omni#input_patterns')
-				let g:neocomplete#sources#omni#input_patterns = {}
-			endif
-			let g:neocomplete#sources#omni#input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
-			let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
-			let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-			exec ":NeoCompleteEnable"
+		" call plug#load('neocomplete.vim')
+			" let g:acp_enableAtStartup = 1
+			" let g:acp_behaviorPythonOmniLength = 2
+			" let g:neocomplete#enable_at_startup = 1
+			" let g:neocomplete#enable_smart_case = 1
+			" let g:neocomplete#enable_auto_select = 1
+			" let g:neocomplete#sources#syntax#min_keyword_length = 3
+			" if !exists('g:neocomplete#sources#omni#input_patterns')
+				" let g:neocomplete#sources#omni#input_patterns = {}
+			" endif
+			" let g:neocomplete#sources#omni#input_patterns.python = '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*'
+			" let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+			" let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+			" exec ":NeoCompleteEnable"
 	endif
 endfunction
 call timer_start(100, 'LoadPlug')
@@ -217,17 +230,17 @@ set showmatch " 高亮显示匹配的括号
 set matchtime=1 " 匹配括号高亮的时间（单位是十分之一秒）
 set scrolloff=3 " 光标移动到buffer的顶部和底部时保持3行距离
 set completeopt=longest,menu
-" set wildmenu "自动补全命令时候使用菜单式匹配列表  
-" set wildmenu  wildmode=longest,list,full "用于命令行的补全，tab
-"自动补全的
-	" autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
-	""autocmd FileType python set omnifunc=python3complete#Complete
-	" autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
-	" autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
-	" autocmd FileType css set omnifunc=csscomplete#CompleteCSS
-	" autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
-	" autocmd FileType java set omnifunc=javacomplete#Complet
-	" set wildchar=<Tab> wildcharm=<C-Z>
+set wildmenu "自动补全命令时候使用菜单式匹配列表  
+set wildmenu  wildmode=longest,list,full "用于命令行的补全，tab
+" 自动补全的
+	autocmd FileType ruby,eruby set omnifunc=rubycomplete#Complete
+	"autocmd FileType python set omnifunc=python3complete#Complete
+	autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+	autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+	autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+	autocmd FileType xml set omnifunc=xmlcomplete#CompleteTags
+	autocmd FileType java set omnifunc=javacomplete#Complet
+	set wildchar=<Tab> wildcharm=<C-Z>
 set nu "显示行号
 set ruler                   " 打开状态栏标尺
 set cursorline              " 突出显示当前行
@@ -248,6 +261,13 @@ set autoindent
 
 """""""""""""""""""""""""""""""""""""如下是各个插件的配置
 
+" let g:deoplete#enable_at_startup = 1
+" call deoplete#custom#option('keyword_patterns', {
+	" \ '_': '[a-zA-Z_]\k*',
+	" \ 'tex': '\\?[a-zA-Z_]\w*',
+	" \ 'ruby': '[a-zA-Z_]\w*[!?]?',
+	" \ 'python': '\%([^. \t]\.\|^\s*@\|^\s*from\s.\+import \|^\s*from \|^\s*import \)\w*',
+	" \})
 "配置lsp
 " map <F2> <ESC>:LspRename<CR>
 " map <F12> <ESC>:LspDefinition<CR>
@@ -266,10 +286,10 @@ if executable('ctags')
     let g:gutentags_modules += ['ctags']
 endif
 if executable('gtags-cscope') && executable('gtags')
-    let g:gutentags_modules += ['gtags_cscope']
+	let g:gutentags_modules += ['gtags_cscope']
 endif
 
-" let g:gutentags_cache_dir = expand('~/.cache/tags') " 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let g:gutentags_cache_dir = expand('~/.cache/tags') " 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
 " 使用plus插件解决问题
 let g:gutentags_auto_add_gtags_cscope = 0 " "禁用 gutentags 自动加载 gtags 数据库的行为 避免多个项目数据库相互干扰
 let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
@@ -281,9 +301,9 @@ autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
 
 " let g:gutentags_plus_nomap = 1
 noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
-noremap <silent> <s-f12> :GscopeFind s <C-R><C-W><cr>
+" noremap <silent> <s-f12> :GscopeFind s <C-R><C-W><cr>
 noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
-noremap <silent> <f12> :GscopeFind g <C-R><C-W><cr>
+" noremap <silent> <f12> :GscopeFind g <C-R><C-W><cr>
 noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
 noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
 noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
@@ -312,8 +332,8 @@ imap <a-f3> :Leaderf rg -e ""
 let g:Lf_WorkingDirectoryMode='Ac'
 let g:Lf_RootMarkers= g:project_root
 
-map <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
-imap <F8> <ESC>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
+map <F8> <ESC>:call ProgramEdit()<cr><esc>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
+imap <F8> <ESC>:call ProgramEdit()<cr><esc>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
 
 let g:rbpt_colorpairs = [
 	\ ['brown',       'RoyalBlue3'],
@@ -340,7 +360,7 @@ let g:rbpt_colorpairs = [
 	au Syntax * RainbowParenthesesLoadBraces	
 
 
-autocmd FileType c,cpp,ruby,eruby,python,xml,java,cs,lisp,vim,c,scheme :call ProgramConfig()
+autocmd FileType c,cpp,ruby,eruby,python,xml,java,cs,lisp,vim,c,scheme,asm,racket :call ProgramConfig()
 autocmd FileType python :call PythonConfig()
 " 保存代码文件前自动修改最后修改时间
 au BufWritePre *.sh           call LastChange('#')
@@ -355,6 +375,25 @@ au BufWritePre Makefile       call LastChange('#')
 au BufWritePre *.php call LastChange('<?php //', '?>')
 au BufWritePre *.html,*htm call LastChange('<!--', '-->')
 """""""""""""""""""""""""""""""""""""""各个函数"""""""""""""""""""""""""""""""""""""""
+
+
+func! ProgramEdit()
+	"我这个是编辑程序的时候需要编辑的时候，一些耗时的操作在这里做
+	if &filetype == 'c' || &filetype == 'cpp'
+		call plug#load('YouCompleteMe')
+	endif
+
+	if  &filetype == 'python' 
+		call plug#load('jedi-vim')
+			let g:jedi#rename_command = "<f2>"
+			let g:jedi#smart_auto_mappings = 1 ""from module.name<space>`
+			let g:jedi#completions_enabled = 1  "用coc来补全。
+
+	endif
+	echo 'programedit'
+
+endfunc
+
 func! PythonConfig()
 	"启动跟python相关的插件
 	"set foldmethod=indent "代码折叠只以缩进为依据
@@ -400,20 +439,24 @@ endfunc
 "定义FormartSrc()
 function! FormartSrc()
 	exec "w"
-	if &filetype == 'c'
-		exec "!astyle --style=ansi --one-line=keep-statements -a --suffix=none %"
-	elseif &filetype == 'cpp' || &filetype == 'hpp'
-		exec "r !astyle --style=ansi --one-line=keep-statements -a --suffix=none %> /dev/null 2>&1"
-	elseif &filetype == 'perl'
-		exec "!astyle --style=gnu --suffix=none %"
-	elseif &filetype == 'py'||&filetype == 'python'
-		exec "r !autopep8 -i --aggressive %"
-	elseif &filetype == 'java'
-		exec "!astyle --style=java --suffix=none %"
-	elseif &filetype == 'jsp'
-		exec "!astyle --style=gnu --suffix=none %"
-	elseif &filetype == 'xml'
-		exec "!astyle --style=gnu --suffix=none %"
+	if(has("win64") || has("win32") || has("win95") || has("win16"))
+		if &filetype == 'c' || &filetype == 'h'
+			exec "!START cmd /c astyle --style=ansi --one-line=keep-statements -a --suffix=none %"
+		elseif &filetype == 'cpp' || &filetype == 'hpp'
+			exec "!START cmd /c astyle --style=ansi --one-line=keep-statements -a --suffix=none %"
+		elseif &filetype == 'perl'
+			exec "!astyle --style=gnu --suffix=none %"
+		elseif &filetype == 'py'||&filetype == 'python'
+			exec "r !autopep8 -i --aggressive %"
+		elseif &filetype == 'java'
+			exec "!astyle --style=java --suffix=none %"
+		elseif &filetype == 'jsp'
+			exec "!astyle --style=gnu --suffix=none %"
+		elseif &filetype == 'xml'
+			exec "!astyle --style=gnu --suffix=none %"
+		endif
+	else
+		echo ''
 	endif
 	exec "e %"
 	exec "w"
