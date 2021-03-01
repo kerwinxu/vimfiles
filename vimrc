@@ -31,10 +31,10 @@
 "如下的设置能保证在gvim，vim 中中文是没问题的.
 ""如下的必须放在开头，否则菜单会乱码。
 set encoding=utf-8
-set langmenu=en
+""set langmenu=en
 " set langmenu=zh_CN.utf-8
-set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
-set makeencoding=char
+set fileencodings=utf-8,ucs-bom,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+""set makeencoding=char
 set imcmdline
 
 "判断操作系统，然后下载插件管理系统。
@@ -72,22 +72,26 @@ filetype off
 	Plug 'sjl/gundo.vim'  "Gnudo是保存更改记录的,
 	Plug 'vim-scripts/surround.vim' "快速配括号等 这个跟cscope的快捷键冲突
 	Plug 'kien/rainbow_parentheses.vim' "括号高亮，不同颜色的。这个是一直加载吧。
-	Plug 'ludovicchabant/vim-gutentags'  "两个是作为自动管理ctags，gtags等项目的。
-	Plug 'skywind3000/gutentags_plus' 
-	Plug 'skywind3000/vim-preview'   "这个是高效预览的。
-	Plug 'lambdalisue/gina.vim'  
-	Plug 'liuchengxu/vim-which-key'
-	Plug 'Yggdroot/LeaderF', { 'do': '.\install.bat' } "搜索文件或者内容的
+	""Plug 'ludovicchabant/vim-gutentags'  "两个是作为自动管理ctags，gtags等项目的。
+	""Plug 'skywind3000/gutentags_plus' 
+	""Plug 'skywind3000/vim-preview'   "这个是高效预览的。
+	""Plug 'lambdalisue/gina.vim'  
+	""Plug 'liuchengxu/vim-which-key'
+	if(has("win64") || has("win32") || has("win95") || has("win16"))
+		""Plug 'Yggdroot/LeaderF', {'do': './install.bat'} "搜索文件或者内容的
+	else
+		""Plug 'Yggdroot/LeaderF', {'do': './install.sh'} "搜索文件或者内容的
+	endif
 	""如下是触发时才加载的。
 	Plug 'majutsushi/Tagbar' ,{'on':'TagbarToggle'} "触发时才加载
 	Plug 'vim-scripts/The-NERD-tree' ,{'on':'NERDTreeToggle'} "树形目录插件
 	"如下是打开的是程序才加载的
-	Plug 'w0rp/ale' ,{'for':[]} "动态监测语法
-	Plug 'skywind3000/asyncrun.vim' ,{'for':[]}  "这个是异步执行的
+	""Plug 'w0rp/ale' ,{'for':[]} "动态监测语法
+	""Plug 'skywind3000/asyncrun.vim' ,{'for':[]}  "这个是异步执行的
 	Plug 'scrooloose/nerdcommenter' ,{'for':[]} "快速注释代码
-	Plug 'SirVer/ultisnips' ,{'for':[]} "snippets补全
-	Plug 'honza/vim-snippets',{'for':[]}
-	Plug 'Shougo/neocomplete.vim',{'for':[]} "自动弹出补全的
+	" Plug 'SirVer/ultisnips' ,{'for':[]} "snippets补全
+	" Plug 'honza/vim-snippets',{'for':[]}
+	""Plug 'Shougo/neocomplete.vim',{'for':[]} "自动弹出补全的
 	" if has('nvim')
 		" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 	" else
@@ -103,20 +107,20 @@ filetype off
 	" nmap <s-f12> <Plug>(coc-references)
 
 	"如下的只是在python中打开。
-	Plug 'davidhalter/jedi-vim' , { 'for':[]}
+	""Plug 'davidhalter/jedi-vim' , { 'for':[]}
 	" Plug 'python-mode/python-mode', { 'for': [], } , "启动慢点，但跟jedi一样，同样没有查找引用啊
 
 	"如下是只是c等其他语言的
-	Plug 'ycm-core/YouCompleteMe' , {'for':[]}
+	""Plug 'ycm-core/YouCompleteMe' , {'for':[]}
 	""打算c开发用vscode和vs了，这里就不用这个了，太耗费启动时间了。
-		if(has("win64") || has("win32") || has("win95") || has("win16")) 
-			let g:ycm_global_ycm_extra_conf='~/vimfiles/pugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
-		else
-			let g:ycm_global_ycm_extra_conf='~/.vim/pugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
-		endif
-		inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>" |            
-		let g:ycm_seed_identifiers_with_syntax = 1                  " 语法关键字补全
-		let g:ycm_min_num_of_chars_for_completion=2                 " 从第2个键入字符就开始罗列匹配项
+"		if(has("win64") || has("win32") || has("win95") || has("win16")) 
+"			let g:ycm_global_ycm_extra_conf='~/vimfiles/pugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
+"		else
+"			let g:ycm_global_ycm_extra_conf='~/.vim/pugged/YouCompleteMe/third_party/ycmd/.ycm_extra_conf.py'
+"		endif
+"		inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<CR>" |            
+"		let g:ycm_seed_identifiers_with_syntax = 1                  " 语法关键字补全
+"		let g:ycm_min_num_of_chars_for_completion=2                 " 从第2个键入字符就开始罗列匹配项
 
 	"lsp的配置如下，但不好用，十分的不好用
 	" Plug 'autozimu/LanguageClient-neovim', {
@@ -141,8 +145,8 @@ filetype off
 			" \ })
 	" endif
 	" 如下是支持markdown的插件
-	Plug 'godlygeek/tabular' , { 'for':['markdown']}
-	Plug 'plasticboy/vim-markdown' , { 'for':['markdown']}
+	""Plug 'godlygeek/tabular' , { 'for':['markdown']}
+	""Plug 'plasticboy/vim-markdown' , { 'for':['markdown']}
 
 
 call plug#end()
@@ -177,8 +181,8 @@ function! LoadPlug(timer) abort
 		call plug#load('nerdcommenter')
 			let g:NERDSpaceDelims = 1 "注释后边加上空格
 			map <a-;> <plug>NERDCommenterToggle
-		call plug#load('ultisnips')
-		call plug#load('vim-snippets')
+		" call plug#load('ultisnips')
+		" call plug#load('vim-snippets')
 		" call plug#load('neocomplete.vim')
 			" let g:acp_enableAtStartup = 1
 			" let g:acp_behaviorPythonOmniLength = 2
@@ -299,18 +303,18 @@ let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
 autocmd FileType qf nnoremap <silent><buffer> p :PreviewQuickfix<cr>
 autocmd FileType qf nnoremap <silent><buffer> P :PreviewClose<cr>
 
-" let g:gutentags_plus_nomap = 1
-noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
-" noremap <silent> <s-f12> :GscopeFind s <C-R><C-W><cr>
-noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
-" noremap <silent> <f12> :GscopeFind g <C-R><C-W><cr>
-noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
-noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
-noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
-noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
-noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
-noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
-noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
+"" let g:gutentags_plus_nomap = 1
+"noremap <silent> <leader>gs :GscopeFind s <C-R><C-W><cr>
+"" noremap <silent> <s-f12> :GscopeFind s <C-R><C-W><cr>
+"noremap <silent> <leader>gg :GscopeFind g <C-R><C-W><cr>
+"" noremap <silent> <f12> :GscopeFind g <C-R><C-W><cr>
+"noremap <silent> <leader>gc :GscopeFind c <C-R><C-W><cr>
+"noremap <silent> <leader>gt :GscopeFind t <C-R><C-W><cr>
+"noremap <silent> <leader>ge :GscopeFind e <C-R><C-W><cr>
+"noremap <silent> <leader>gf :GscopeFind f <C-R>=expand("<cfile>")<cr><cr>
+"noremap <silent> <leader>gi :GscopeFind i <C-R>=expand("<cfile>")<cr><cr>
+"noremap <silent> <leader>gd :GscopeFind d <C-R><C-W><cr>
+"noremap <silent> <leader>ga :GscopeFind a <C-R><C-W><cr>
 
 let  g:gundo_prefer_python3=1 
 "配色配置。
@@ -323,14 +327,14 @@ else
 endif
 
 "配置LeaderF"
-let g:Lf_ShortcutF = '<f3>'
-let g:Lf_ShortcutB='<leader>sb'
-map <c-f3> :LeaderfTag<cr>
-imap <c-f3> :LeaderfTag<cr>
-map <a-f3> :Leaderf rg -e ""
-imap <a-f3> :Leaderf rg -e ""
-let g:Lf_WorkingDirectoryMode='Ac'
-let g:Lf_RootMarkers= g:project_root
+"let g:Lf_ShortcutF = '<f3>'
+"let g:Lf_ShortcutB='<leader>sb'
+"map <c-f3> :LeaderfTag<cr>
+"imap <c-f3> :LeaderfTag<cr>
+"map <a-f3> :Leaderf rg -e ""
+"imap <a-f3> :Leaderf rg -e ""
+"let g:Lf_WorkingDirectoryMode='Ac'
+"let g:Lf_RootMarkers= g:project_root
 
 map <F8> <ESC>:call ProgramEdit()<cr><esc>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
 imap <F8> <ESC>:call ProgramEdit()<cr><esc>:NERDTreeToggle <CR><ESC>:TagbarToggle<CR><ESC>
@@ -384,7 +388,7 @@ func! ProgramEdit()
 	endif
 
 	if  &filetype == 'python' 
-		call plug#load('jedi-vim')
+		""call plug#load('jedi-vim')
 			let g:jedi#rename_command = "<f2>"
 			let g:jedi#smart_auto_mappings = 1 ""from module.name<space>`
 			let g:jedi#completions_enabled = 1  "用coc来补全。
@@ -424,9 +428,9 @@ endfunc
 func! ProgramConfig()
 	call AutoPair()
 	if g:iswindows
-		source D:/gtags/share/gtags/gtags.vim
-		source D:/gtags/share/gtags/gtags-cscope.vim
-		nmap <S-f3> :GscopeFind 
+		" source D:/gtags/share/gtags/gtags.vim
+		" source D:/gtags/share/gtags/gtags-cscope.vim
+		" nmap <S-f3> :GscopeFind 
 	endif
 	"格式化代码。
 	map <c-f8> :call FormartSrc()<CR>
@@ -735,5 +739,5 @@ if isdirectory(expand(g:plug_path. "vim-which-key/"))
 				\ 'name' : '+Comment',
 				\ 'c':[ '<plug>NERDCommenterToggle' , '通用注释'],
 				\ 'f':[ ':call CommentPython()' , 'python函数或者类注释'],}
-	call which_key#register('<Space>', "g:which_key_map")
+	""call which_key#register('<Space>', "g:which_key_map")
 endif
