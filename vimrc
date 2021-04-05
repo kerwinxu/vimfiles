@@ -45,6 +45,9 @@ if(has("win64") || has("win32") || has("win95") || has("win16"))
     let g:iswindows = 1
 	let g:plug_path = "~/vimfiles/pugged/"   "win的插件目录放在这里吧。
 	language messages zh_CN.utf-8
+	set pythonthreedll=D:/anaconda3/python38.dll
+	set pythonthreehome=D:/anaconda3
+
 else
 	if !filereadable(expand("~/.vim/autoload/plug.vim"))
 		exec "!curl -fLo ~/.vim/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim" 
@@ -107,7 +110,7 @@ filetype off
 	" nmap <s-f12> <Plug>(coc-references)
 
 	"如下的只是在python中打开。
-	""Plug 'davidhalter/jedi-vim' , { 'for':[]}
+	 "Plug 'davidhalter/jedi-vim' , { 'for':['python']}
 	" Plug 'python-mode/python-mode', { 'for': [], } , "启动慢点，但跟jedi一样，同样没有查找引用啊
 
 	"如下是只是c等其他语言的
@@ -199,7 +202,7 @@ function! LoadPlug(timer) abort
 			" exec ":NeoCompleteEnable"
 	endif
 endfunction
-call timer_start(100, 'LoadPlug')
+" "call timer_start(100, 'LoadPlug')
 
 "如下是一些通用的配置"
 if g:iswindows
@@ -364,7 +367,7 @@ let g:rbpt_colorpairs = [
 	au Syntax * RainbowParenthesesLoadBraces	
 
 
-autocmd FileType c,cpp,ruby,eruby,python,xml,java,cs,lisp,vim,c,scheme,asm,racket :call ProgramConfig()
+""autocmd FileType c,cpp,ruby,eruby,python,xml,java,cs,lisp,vim,c,scheme,asm,racket :call ProgramConfig()
 autocmd FileType python :call PythonConfig()
 " 保存代码文件前自动修改最后修改时间
 au BufWritePre *.sh           call LastChange('#')
@@ -394,8 +397,7 @@ func! ProgramEdit()
 			let g:jedi#completions_enabled = 1  "用coc来补全。
 
 	endif
-	echo 'programedit'
-
+	
 endfunc
 
 func! PythonConfig()
